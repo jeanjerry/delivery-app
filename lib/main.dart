@@ -26,6 +26,8 @@ void main() async {
   ));
 }
 
+var ip =('http://140.127.114.38:15000/');
+
 class MyApp extends StatefulWidget {
   // This widget is the root of your application.
   @override

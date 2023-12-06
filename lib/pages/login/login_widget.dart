@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -10,6 +12,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'login_model.dart';
 export 'login_model.dart';
+import 'package:http/http.dart' as http;
+import '/main.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({Key? key}) : super(key: key);
@@ -20,6 +24,80 @@ class LoginWidget extends StatefulWidget {
 
 class _LoginWidgetState extends State<LoginWidget>
     with TickerProviderStateMixin {
+
+  Future<void> createAccount() async {
+
+    var url = Uri.parse(ip+"createAccount");
+    final responce = await http.post(url,body: {
+
+      "password": _model.passwordController1.text,
+
+      });
+    if (responce.statusCode == 200) {
+      var data = json.decode(responce.body);//將json解碼為陣列形式
+      print("帳號:"+data["account"]);
+
+      setState(() {
+        FFAppState().account = data["account"];
+        _model.emailAddressController.text = FFAppState().account;
+        _model.passwordController2.text = FFAppState().password;
+      });
+    }
+  }
+
+  Future<void> checkUser() async {
+
+    var url = Uri.parse(ip+"checkUser");
+    final responce = await http.post(url,body: {
+
+      "wallet": FFAppState().account.toString(),
+      "password": FFAppState().password.toString(),
+
+    });
+
+    if (responce.statusCode == 200) {
+      var data = json.decode(responce.body);//將json解碼為陣列形式
+      print("帳號是否正確:${data['result'].toString()}");
+      if(data['result']==false){
+        await showDialog(
+          context: context,
+          builder: (alertDialogContext) {
+            return AlertDialog(
+              title: Text('登入失敗'),
+              actions: [
+                TextButton(
+                  onPressed: () =>
+                      Navigator.pop(alertDialogContext),
+                  child: Text('Ok'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+      else{
+        await showDialog(
+          context: context,
+          builder: (alertDialogContext) {
+            return AlertDialog(
+              title: Text('登入成功'),
+              actions: [
+                TextButton(
+                  onPressed: () =>
+                      Navigator.pop(alertDialogContext),
+                  child: Text('Ok'),
+                ),
+              ],
+            );
+          },
+        );
+        context.pushNamed('home');
+      }
+    }
+  }
+
+
+
   late LoginModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -317,18 +395,13 @@ class _LoginWidgetState extends State<LoginWidget>
                                                               .width *
                                                           1.0,
                                                       child: TextFormField(
-                                                        controller: _model
-                                                            .passwordController1,
-                                                        focusNode: _model
-                                                            .passwordFocusNode1,
+                                                        controller: _model.passwordController1,
+                                                        focusNode: _model.passwordFocusNode1,
                                                         onFieldSubmitted:
                                                             (_) async {
                                                           setState(() {
-                                                            FFAppState()
-                                                                    .password =
-                                                                _model
-                                                                    .passwordController1
-                                                                    .text;
+                                                            FFAppState().password =
+                                                                _model.passwordController1.text;
                                                           });
                                                         },
                                                         autofocus: true,
@@ -467,7 +540,41 @@ class _LoginWidgetState extends State<LoginWidget>
                                                                   16.0),
                                                       child: FFButtonWidget(
                                                         onPressed: () async {
-                                                          context.safePop();
+                                                          if(_model.passwordController1.text.isNotEmpty==false){
+                                                            await showDialog(
+                                                              context: context,
+                                                              builder: (alertDialogContext) {
+                                                                return AlertDialog(
+                                                                  title: Text('密碼不能為空'),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      onPressed: () =>
+                                                                          Navigator.pop(alertDialogContext),
+                                                                      child: Text('Ok'),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
+                                                          }
+                                                          else{
+                                                            createAccount();
+                                                            await showDialog(
+                                                              context: context,
+                                                              builder: (alertDialogContext) {
+                                                                return AlertDialog(
+                                                                  title: Text("創建完成"),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      onPressed: () =>
+                                                                          Navigator.pop(alertDialogContext),
+                                                                      child: Text('Ok'),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
+                                                          }
                                                         },
                                                         text: '創建',
                                                         options:
@@ -587,11 +694,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                         onFieldSubmitted:
                                                             (_) async {
                                                           setState(() {
-                                                            FFAppState()
-                                                                    .account =
-                                                                _model
-                                                                    .emailAddressController
-                                                                    .text;
+                                                            FFAppState().account = _model.emailAddressController.text;
                                                           });
                                                         },
                                                         autofocus: true,
@@ -842,8 +945,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                                   16.0),
                                                       child: FFButtonWidget(
                                                         onPressed: () async {
-                                                          context.pushNamed(
-                                                              'home');
+                                                          checkUser();
                                                         },
                                                         text: '登入',
                                                         options:
