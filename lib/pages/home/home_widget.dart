@@ -19,6 +19,7 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> {
   late HomeModel _model;
 
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
