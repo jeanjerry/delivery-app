@@ -27,7 +27,7 @@ class _SettingWidgetState extends State<SettingWidget> {
     _model = createModel(context, () => SettingModel());
 
     _model.yourNameController ??=
-        TextEditingController(text: FFAppState().name);
+        TextEditingController(text: FFAppState().Name);
     _model.yourNameFocusNode ??= FocusNode();
 
     _model.phoneController ??=
@@ -115,7 +115,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                   ),
                   onFieldSubmitted: (_) async {
                     setState(() {
-                      FFAppState().name = _model.yourNameController.text;
+                      FFAppState().Name = _model.yourNameController.text;
                     });
                   },
                   textCapitalization: TextCapitalization.words,

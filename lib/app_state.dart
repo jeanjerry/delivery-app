@@ -24,7 +24,7 @@ class FFAppState extends ChangeNotifier {
       _password = prefs.getString('ff_password') ?? _password;
     });
     _safeInit(() {
-      _name = prefs.getString('ff_name') ?? _name;
+      _Name = prefs.getString('ff_Name') ?? _Name;
     });
     _safeInit(() {
       _Telephone = prefs.getString('ff_Telephone') ?? _Telephone;
@@ -32,6 +32,12 @@ class FFAppState extends ChangeNotifier {
     _safeInit(() {
       _email = prefs.getString('ff_email') ?? _email;
     });
+    Future initializePersistedState() async {
+      prefs = await SharedPreferences.getInstance();
+      _safeInit(() {
+        _name = prefs.getStringList('ff_name') ?? _name;
+      });
+    }
   }
 
   void update(VoidCallback callback) {
@@ -40,6 +46,41 @@ class FFAppState extends ChangeNotifier {
   }
 
   late SharedPreferences prefs;
+
+  List<String> _name = [];
+  List<String> get name => _name;
+  set name(List<String> _value) {
+    _name = _value;
+    prefs.setStringList('ff_name', _value);
+  }
+
+  void addToName(String _value) {
+    _name.add(_value);
+    prefs.setStringList('ff_name', _name);
+  }
+
+  void removeFromName(String _value) {
+    _name.remove(_value);
+    prefs.setStringList('ff_name', _name);
+  }
+
+  void removeAtIndexFromName(int _index) {
+    _name.removeAt(_index);
+    prefs.setStringList('ff_name', _name);
+  }
+
+  void updateNameAtIndex(
+      int _index,
+      String Function(String) updateFn,
+      ) {
+    _name[_index] = updateFn(_name[_index]);
+    prefs.setStringList('ff_name', _name);
+  }
+
+  void insertAtIndexInName(int _index, String _value) {
+    _name.insert(_index, _value);
+    prefs.setStringList('ff_name', _name);
+  }
 
   String _account = '';
   String get account => _account;
@@ -55,11 +96,11 @@ class FFAppState extends ChangeNotifier {
     prefs.setString('ff_password', _value);
   }
 
-  String _name = '';
-  String get name => _name;
-  set name(String _value) {
-    _name = _value;
-    prefs.setString('ff_name', _value);
+  String _Name = '';
+  String get Name => _Name;
+  set Name(String _value) {
+    _Name = _value;
+    prefs.setString('ff_Name', _value);
   }
 
   String _Telephone = '';
