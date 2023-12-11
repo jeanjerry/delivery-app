@@ -24,6 +24,7 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> {
 
 
+<<<<<<< HEAD
 
     getContract() async {
       var url = Uri.parse(ip+"signUp/getContract");
@@ -162,6 +163,8 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   late HomeModel _model;
     late DBHelper dbHelper; // DBHelper 實例
+=======
+>>>>>>> 6724fd920412fd6d53643f237f0d57939d8d689e
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
