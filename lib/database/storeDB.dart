@@ -45,6 +45,14 @@ class DBHelper {
             fee TEXT
           )
         ''');
+        // 建立Order_number表格
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS Orders (
+            id TEXT,
+            storeName TEXT,
+            fee TEXT
+          )
+        ''');
       },
     );
   }
@@ -61,16 +69,28 @@ class DBHelper {
     await db.insert('Order_contents', Order_content);
   }
 
+  // 在Order_numbers 表格中插入資料
+  Future<void> dbInsertOrder(Map<String, dynamic> Order) async {
+    final db = await database;
+    await db.insert('Orders', Order);
+  }
+
   // 從 stores 表格中獲得資料
   Future<List<Map<String, dynamic>>> dbGetStores() async {
     final db = await database;
     return await db.query('stores');
   }
 
-  // 從 Order_content 表格中獲得資料
+  // 從 Order_contents 表格中獲得資料
   Future<List<Map<String, dynamic>>> dbGetOrder_content() async {
     final db = await database;
     return await db.query('Order_contents');
+  }
+
+  // 從 Order_numbers 表格中獲得資料
+  Future<List<Map<String, dynamic>>> dbGetOrder() async {
+    final db = await database;
+    return await db.query('Orders');
   }
 
   // 在 stores 表格中重置資料
@@ -79,10 +99,16 @@ class DBHelper {
     await db.delete('stores');
   }
 
-  // 在 Order_content 表格中重置資料
+  // 在 Order_contents 表格中重置資料
   Future<void> dbResetOrder_content() async {
     final db = await database;
     await db.delete('Order_contents');
+  }
+
+  // 在 Order_numbers 表格中重置資料
+  Future<void> dbResetOrder() async {
+    final db = await database;
+    await db.delete('Orders');
   }
 
 }

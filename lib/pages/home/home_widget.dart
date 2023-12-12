@@ -24,7 +24,7 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> {
 
 
-<<<<<<< HEAD
+
 
     getContract() async {
       var url = Uri.parse(ip+"signUp/getContract");
@@ -124,7 +124,34 @@ class _HomeWidgetState extends State<HomeWidget> {
 
     List<Map<String, dynamic>> orderContentList = []; // 訂單內容
 
-    Future<List> getData() async {
+    Future<List> getlist() async {
+      List contracts = await getContract();
+      await dbHelper.dbResetOrder();
+      for (int i = 0; i < contracts.length; i++) {
+        var result = await checkAvailableOrder(contracts[i]);
+        if (result == true) {
+          List availableOrderID = await getAvailableOrder(contracts[i]);
+          var name = await getStore(contracts[i]);
+          if (availableOrderID != null) {
+            print("${contracts[i]} 店家的可接單號 ID 為: $availableOrderID");
+            for(int j = 0; j < availableOrderID.length; j++){
+              var fee = await getOrder(contracts[i],availableOrderID[j]);
+                Map<String, dynamic> A = {};//重要{}
+                A['id']=availableOrderID[j];
+                A['storeName']=name["storeName"];
+                A['fee']=fee["fee"];
+                await dbHelper.dbInsertOrder(A); // 將訂單內容插入資料庫
+            }
+          }
+        }
+      }
+      orderContentList = await dbHelper.dbGetOrder(); // 更新訂單內容
+      print(orderContentList);
+      return orderContentList;
+    }
+
+
+    /*Future<List> getData() async {
       List storeNameList = ["storeNameList"];
       List contracts = await getContract();
       //orderContentList = await dbHelper.dbGetOrder_content();
@@ -150,7 +177,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                 A['fee']=fee["fee"];
                 await dbHelper.dbInsertOrder_content(A); // 將訂單內容插入資料庫
               }
-              //print("訂單內容是: $orderContent");
+              print("訂單內容是: $orderContent");
               orderContentList = await dbHelper.dbGetOrder_content(); // 更新訂單內容
 
             }
@@ -159,12 +186,10 @@ class _HomeWidgetState extends State<HomeWidget> {
       }
       print(orderContentList);
       return orderContentList;
-    }
+    }*/
 
   late HomeModel _model;
     late DBHelper dbHelper; // DBHelper 實例
-=======
->>>>>>> 6724fd920412fd6d53643f237f0d57939d8d689e
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -274,7 +299,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                            borderRadius: BorderRadius.circular(0.0),
                          ),
                          child:FutureBuilder<List>(
-                           future: getData(),
+                           future: getlist(),
                            builder: (ctx,ss) {
                              if(ss.hasError){
                                print("error");
@@ -288,99 +313,6 @@ class _HomeWidgetState extends State<HomeWidget> {
                            },
                          ),
                        ),
-
-
-                        /*child: Container(
-                          width: MediaQuery.sizeOf(context).width * 1.0,
-                          height: MediaQuery.sizeOf(context).height * 0.22,
-                          decoration: BoxDecoration(
-                            color: Color(0xFFF1F4F8),
-                            borderRadius: BorderRadius.circular(0.0),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Container(
-                                width: MediaQuery.sizeOf(context).width * 0.9,
-                                height:
-                                    MediaQuery.sizeOf(context).height * 0.15,
-                                decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryBackground,
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: Image.network(
-                                    'https://i.epochtimes.com/assets/uploads/2022/05/id13748758-557776.png',
-                                    width:
-                                        MediaQuery.sizeOf(context).width * 1.0,
-                                    height:
-                                        MediaQuery.sizeOf(context).height * 1.0,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      AutoSizeText(
-                                        '麥當勞(店家名變數)',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily: 'Readex Pro',
-                                              fontSize: 19.0,
-                                            ),
-                                      ),
-                                      AutoSizeText(
-                                        '店家距離: 變數',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily: 'Readex Pro',
-                                              fontSize: 19.0,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      AutoSizeText(
-                                        '外送費: 變數',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily: 'Readex Pro',
-                                              fontSize: 19.0,
-                                            ),
-                                      ),
-                                      AutoSizeText(
-                                        '消費者距離: 變數',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily: 'Readex Pro',
-                                              fontSize: 19.0,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),*/
                       ),
                     ],
                   ),
