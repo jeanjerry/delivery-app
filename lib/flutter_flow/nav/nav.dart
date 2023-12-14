@@ -57,7 +57,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'home-1',
           path: '/home1',
-          builder: (context, params) => Home1Widget(),
+          builder: (context, params) => Home1Widget(selectedItem: {},),
         ),
         FFRoute(
           name: 'order',

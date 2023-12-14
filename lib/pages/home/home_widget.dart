@@ -13,6 +13,7 @@ export 'home_model.dart';
 import 'package:http/http.dart' as http;
 import '/main.dart';
 import '/database/storeDB.dart'; // 引入自定義的 SQL 檔案
+import '../home_1/home1_widget.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({Key? key}) : super(key: key);
@@ -127,6 +128,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     Future<List> getlist() async {
       List contracts = await getContract();
       await dbHelper.dbResetOrder();
+      orderContentList.clear();
       for (int i = 0; i < contracts.length; i++) {
         var result = await checkAvailableOrder(contracts[i]);
         if (result == true) {
@@ -135,19 +137,22 @@ class _HomeWidgetState extends State<HomeWidget> {
           if (availableOrderID != null) {
             print("${contracts[i]} 店家的可接單號 ID 為: $availableOrderID");
             for(int j = 0; j < availableOrderID.length; j++){
-              var fee = await getOrder(contracts[i],availableOrderID[j]);
+              var ORDER = await getOrder(contracts[i],availableOrderID[j]);
                 Map<String, dynamic> A = {};//重要{}
                 A['id']=availableOrderID[j];
                 A['storeName']=name["storeName"];
-                A['fee']=fee["fee"];
+                A['fee']=ORDER["fee"];
+                A['contract']=contracts[i];
+                A['foodCost']=ORDER["foodCost"];
+                A['note']=ORDER["note"];
                 await dbHelper.dbInsertOrder(A); // 將訂單內容插入資料庫
             }
           }
         }
       }
-      orderContentList = await dbHelper.dbGetOrder(); // 更新訂單內容
-      print(orderContentList);
-      return orderContentList;
+           orderContentList = await dbHelper.dbGetOrder(); // 更新訂單內
+          print(dbHelper.dbGetOrder());
+          return orderContentList;
     }
 
 
@@ -288,9 +293,6 @@ class _HomeWidgetState extends State<HomeWidget> {
                         focusColor: Colors.transparent,
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
-                        onTap: () async {
-                          context.pushNamed('home-1');
-                        },
                        child:Container(
                          width: MediaQuery.sizeOf(context).width * 1.0,
                          height: MediaQuery.sizeOf(context).height * 1.0,
@@ -400,6 +402,25 @@ class Items extends StatelessWidget {
                       .secondaryBackground,
                   borderRadius: BorderRadius.circular(20.0),
                 ),
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () async {
+                      /*context.pushNamed(
+                      'home-1',
+                      queryParameters: {
+                      'ab': serializeParam('12213', ParamType.String,),}.withoutNulls,);*/
+
+                    Map<String, dynamic> selectedItem = list![i];
+                    print(selectedItem);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => Home1Widget(selectedItem: selectedItem, ),
+                      ),
+                    );
+                  },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: Image.network(
@@ -409,6 +430,7 @@ class Items extends StatelessWidget {
                     height:
                     MediaQuery.sizeOf(context).height * 1.0,
                     fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -424,7 +446,6 @@ class Items extends StatelessWidget {
                     children: [
                       AutoSizeText(
                         list![i]["storeName"],
-                    //FFAppState().name[1].toString(),
                         style: FlutterFlowTheme.of(context)
                             .bodyMedium
                             .override(

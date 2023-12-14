@@ -50,7 +50,10 @@ class DBHelper {
           CREATE TABLE IF NOT EXISTS Orders (
             id TEXT,
             storeName TEXT,
-            fee TEXT
+            fee TEXT,
+            contract TEXT,
+            foodCost TEXT,
+            note TEXT
           )
         ''');
       },
