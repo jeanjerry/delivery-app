@@ -63,7 +63,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: 'order',
           path: '/order',
           builder: (context, params) =>
-              params.isEmpty ? NavBarPage(initialPage: 'order') : OrderWidget(),
+              params.isEmpty ? NavBarPage(initialPage: 'order') : OrderWidget(A: {},),
         ),
         FFRoute(
           name: 'order-1',

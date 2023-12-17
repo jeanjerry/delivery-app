@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../order/order_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -28,7 +29,7 @@ class Home1Widget extends StatefulWidget {
 
 class _Home1WidgetState extends State<Home1Widget> {
   late Home1Model _model;
-  late DBHelper dbHelper; // DBHelper 實例
+  late DBHelper dbHelper;// DBHelper 實例
 
 
   getOrderContent(contractAddress,availableOrderID) async {
@@ -45,21 +46,6 @@ class _Home1WidgetState extends State<Home1Widget> {
       var data = json.decode(responce.body);//將json解碼為陣列形式
       //print("訂單內容:${data["orderContent"].toString()}");
       return data["orderContent"];
-    }
-  }
-
-  getContract() async {
-    var url = Uri.parse(ip+"signUp/getContract");
-
-    final responce = await http.post(url,body: {
-
-      "account": FFAppState().account,
-
-    });
-    if (responce.statusCode == 200) {
-      var data = json.decode(responce.body);//將json解碼為陣列形式
-      //print("店家:${data["contracts"].toString()}");
-      return data["contracts"];
     }
   }
 
@@ -83,6 +69,59 @@ class _Home1WidgetState extends State<Home1Widget> {
       return data;
     }
   }
+
+  getOrder() async {
+    var url = Uri.parse(ip+"contract/getOrder");
+
+    final responce = await http.post(url,body: {
+
+      "contractAddress": widget.selectedItem['contract'],
+      "wallet": FFAppState().account,
+      "id": widget.selectedItem['id'],
+
+    });
+    if (responce.statusCode == 200) {
+      var data = json.decode(responce.body);//將json解碼為陣列形式
+      return data;
+    }
+  }
+
+  /*List<Map<String, dynamic>> orderList = []; // 訂單內容
+
+  Future<List> getorderList() async {      //把getorder放入資料庫stores
+    var orderlist = await getOrder();
+    //await dbHelper.dbResetStores();// 重製訂單內容
+    Map<String, dynamic> A = {};//重要{}
+    A['id']=widget.selectedItem['id'];
+    A['consumer']=orderlist["consumer"].toString();
+    A['consumer'] = A['consumer'].replaceAll(RegExp(r'^\[|\]$'), '');
+    A['fee']=orderlist["fee"];
+    A['note']=orderlist['note'];
+    A['delivery']=orderlist["delivery"].toString();
+    A['delivery'] = A['delivery'].replaceAll(RegExp(r'^\[|\]$'), '');
+    A['orderStatus']=orderlist["orderStatus"];
+    A['contract']=widget.selectedItem['contract'];
+    await dbHelper.dbInsertStore(A); // 將訂單內容插入資料庫
+    orderList = await dbHelper.dbGetStores();
+    print(orderList);
+    return orderList;
+  }*/
+
+  List<Map<String, dynamic>> checkorderList = []; // 訂單內容
+
+  Future<List> checkorder() async {      //把單號和店家合約放入資料庫checkorder
+    //await dbHelper.dbResetcheckorder();// 重製訂單內容
+    Map<String, dynamic> A = {};//重要{}
+    A['id']=widget.selectedItem['id'];
+    A['contract']=widget.selectedItem['contract'];
+    await dbHelper.dbInsertcheckorder(A); // 將訂單內容插入資料庫
+    checkorderList = await dbHelper.dbGetcheckorder();
+    print(checkorderList);
+    return checkorderList;
+  }
+
+
+
 
 
 
@@ -130,7 +169,6 @@ class _Home1WidgetState extends State<Home1Widget> {
 
   @override
   Widget build(BuildContext context) {
-
     //print(orderContentList[0]["orderID"]);
     //print(orderContentList);
 
@@ -467,8 +505,18 @@ class _Home1WidgetState extends State<Home1Widget> {
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                         child: FFButtonWidget(
-                          onPressed: () {
-                            deliveryAcceptOrder();
+                          onPressed: () async {
+                            /*Map<String, dynamic> A = {};//重要{}
+                            A['id']=widget.selectedItem['id'];
+                            A['contract']=widget.selectedItem['contract'];
+                            print(A);
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => OrderWidget( A: A, ),
+                              ),
+                            );*/
+                            await deliveryAcceptOrder();
+                            await checkorder();
                             context.pushNamed('order');
                           },
                           text: '接單',

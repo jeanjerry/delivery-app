@@ -21,16 +21,12 @@ class DBHelper {
         // 建立 stores 表格
         await db.execute('''
           CREATE TABLE IF NOT EXISTS stores (
-            id INTEGER PRIMARY KEY,
-            storeName TEXT,
-            storeAddress TEXT,
-            storePhone TEXT,
-            storeWallet TEXT,
-            currentID TEXT,
-            storeTag TEXT,
-            latitudeAndLongitude TEXT,
-            menuLink TEXT,
-            storeEmail TEXT,
+            id TEXT,
+            consumer TEXT,
+            fee TEXT,
+            note TEXT,
+            delivery TEXT,
+            orderStatus TEXT,
             contract TEXT
           )
         ''');
@@ -45,7 +41,7 @@ class DBHelper {
             fee TEXT
           )
         ''');
-        // 建立Order_number表格
+        // 建立Orders表格
         await db.execute('''
           CREATE TABLE IF NOT EXISTS Orders (
             id TEXT,
@@ -54,6 +50,13 @@ class DBHelper {
             contract TEXT,
             foodCost TEXT,
             note TEXT
+          )
+        ''');
+        // 建立checkorders表格
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS checkorders (
+            id TEXT,
+            contract TEXT
           )
         ''');
       },
@@ -78,6 +81,12 @@ class DBHelper {
     await db.insert('Orders', Order);
   }
 
+  // 在Order_numbers 表格中插入資料
+  Future<void> dbInsertcheckorder(Map<String, dynamic> checkorder) async {
+    final db = await database;
+    await db.insert('checkorders', checkorder);
+  }
+
   // 從 stores 表格中獲得資料
   Future<List<Map<String, dynamic>>> dbGetStores() async {
     final db = await database;
@@ -88,6 +97,12 @@ class DBHelper {
   Future<List<Map<String, dynamic>>> dbGetOrder_content() async {
     final db = await database;
     return await db.query('Order_contents');
+  }
+
+  // 從 Order_numbers 表格中獲得資料
+  Future<List<Map<String, dynamic>>> dbGetcheckorder() async {
+    final db = await database;
+    return await db.query('checkorders');
   }
 
   // 從 Order_numbers 表格中獲得資料
@@ -108,10 +123,16 @@ class DBHelper {
     await db.delete('Order_contents');
   }
 
-  // 在 Order_numbers 表格中重置資料
+  // 在 Order 表格中重置資料
   Future<void> dbResetOrder() async {
     final db = await database;
     await db.delete('Orders');
+  }
+
+  // 在 Order 表格中重置資料
+  Future<void> dbResetcheckorder() async {
+    final db = await database;
+    await db.delete('checkorders');
   }
 
 }

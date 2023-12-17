@@ -113,7 +113,7 @@ class _NavBarPageState extends State<NavBarPage> {
   Widget build(BuildContext context) {
     final tabs = {
       'home': HomeWidget(),
-      'order': OrderWidget(),
+      'order': OrderWidget(A: {},),
       'wallet': WalletWidget(),
       'setting': SettingWidget(),
     };
