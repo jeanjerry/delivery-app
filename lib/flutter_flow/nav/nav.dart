@@ -68,7 +68,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'order-1',
           path: '/order1',
-          builder: (context, params) => Order1Widget(),
+          builder: (context, params) => Order1Widget(B: {},),
         ),
         FFRoute(
           name: 'wallet',

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -9,9 +10,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'order1_model.dart';
 export 'order1_model.dart';
+import 'package:http/http.dart' as http;
+import '/main.dart';
+import '/database/storeDB.dart'; // 引入自定義的 SQL 檔案
 
 class Order1Widget extends StatefulWidget {
-  const Order1Widget({Key? key}) : super(key: key);
+  const Order1Widget({Key? key, required this.B}) : super(key: key);
+  final Map<String, dynamic> B;
 
   @override
   _Order1WidgetState createState() => _Order1WidgetState();
@@ -19,13 +24,104 @@ class Order1Widget extends StatefulWidget {
 
 class _Order1WidgetState extends State<Order1Widget> {
   late Order1Model _model;
+  late DBHelper dbHelper; // DBHelper 實例
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  getOrderContent() async {
+    var url = Uri.parse(ip+"contract/getOrderContent");
+
+    final responce = await http.post(url,body: {
+
+      "contractAddress": widget.B["contract"],
+      "wallet": FFAppState().account,
+      "id": widget.B["id"],
+
+    });
+    if (responce.statusCode == 200) {
+      var data = json.decode(responce.body);//將json解碼為陣列形式
+      //print("訂單內容:${data["orderContent"].toString()}");
+      return data["orderContent"];
+    }
+  }
+
+  getorderStatus()  {
+    String str = "";
+    if(widget.B["orderStatus"]=='2'){
+      str = "店家餐點準備中";
+    }
+    else if (widget.B["orderStatus"]=='3'){
+      str = "外送員已取餐";
+    }
+    else if (widget.B["orderStatus"]=='4'){
+      str = "外送員外送中";
+    }
+    else if (widget.B["orderStatus"]=='5'){
+      str = "等待客人收到餐點";
+    }
+    else if (widget.B["orderStatus"]=='6'){
+      str = "客人收到餐點";
+    }
+    else if (widget.B["orderStatus"]=='7'){
+      str = "店家拒絕出餐";
+    }
+    else if (widget.B["orderStatus"]=='10'){
+      str = "店家未完成餐點";
+    }
+    else if (widget.B["orderStatus"]=='11'){
+      str = "外送員未完成送餐";
+    }
+    else if (widget.B["orderStatus"]=='12'){
+      str = "取消訂單";
+    }
+    return str;
+  }
+
+  getStore() async {
+    var url = Uri.parse(ip+"contract/getStore");
+
+    final responce = await http.post(url,body: {
+
+      "contractAddress": widget.B["contract"],
+      "wallet": FFAppState().account,
+
+    });
+    if (responce.statusCode == 200) {
+      var data = json.decode(responce.body);//將json解碼為陣列形式
+      //print("店家名稱:${data["storeName"].toString()}");
+      return data;
+    }
+  }
+
+  List<Map<String, dynamic>> orderContentList = []; // 訂單內容
+
+  Future<List> getData() async {
+    await dbHelper.dbResetOrder_content();
+    var orderContent = await getOrderContent();
+    var storeaddress = await getStore();
+    for (var i =0; i< orderContent.length;i++){
+      Map<String, dynamic> A = {};//重要{}
+      A['orderID']=orderContent[i][0];
+      A['num']=orderContent[i][1];
+      A['contract']=widget.B['contract'];
+      A['id']=widget.B['id'];
+      A['storeName']=widget.B["storeName"];
+      A['fee']=widget.B["fee"];
+      A['storeAddress']=storeaddress["storeAddress"];
+      await dbHelper.dbInsertOrder_content(A); // 將訂單內容插入資料庫
+    }
+    print("訂單內容是: $orderContent");
+    orderContentList = await dbHelper.dbGetOrder_content(); // 更新訂單內
+    print(orderContentList);
+    return orderContentList;
+  }
+
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => Order1Model());
+    dbHelper = DBHelper(); // 初始化 DBHelper
   }
 
   @override
@@ -37,6 +133,10 @@ class _Order1WidgetState extends State<Order1Widget> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> myList =widget.B['consumer'].split(',');
+    var str = getorderStatus();
+
+
     if (isiOS) {
       SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(
@@ -116,7 +216,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                       ),
                       Container(
                         width: MediaQuery.sizeOf(context).width * 1.0,
-                        height: MediaQuery.sizeOf(context).height * 0.42,
+                        height: MediaQuery.sizeOf(context).height * 0.45,
                         constraints: BoxConstraints(
                           maxWidth: 750.0,
                         ),
@@ -140,7 +240,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '單號',
+                                '單號 : '+widget.B['id'],
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
@@ -167,106 +267,26 @@ class _Order1WidgetState extends State<Order1Widget> {
                                   Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         0.0, 0.0, 0.0, 12.0),
-                                    child: Container(
-                                      width: MediaQuery.sizeOf(context).width *
-                                          1.0,
+                                    child:Container(
+                                      width: MediaQuery.sizeOf(context).width * 1.0,
+                                      height: MediaQuery.sizeOf(context).height * 0.1 ,
                                       decoration: BoxDecoration(
-                                        color: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        borderRadius:
-                                            BorderRadius.circular(0.0),
+                                        color: Color(0xFFF1F4F8),
+                                        borderRadius: BorderRadius.circular(0.0),
                                       ),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 4.0, 0.0, 12.0),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(8.0, 0.0,
-                                                                4.0, 0.0),
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        AutoSizeText(
-                                                          '食物變數 ',
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .titleLarge
-                                                              .override(
-                                                                fontFamily:
-                                                                    'Outfit',
-                                                                fontSize: 20.0,
-                                                              ),
-                                                        ),
-                                                        AutoSizeText(
-                                                          '食物變數',
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .titleLarge
-                                                              .override(
-                                                                fontFamily:
-                                                                    'Outfit',
-                                                                fontSize: 20.0,
-                                                              ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  children: [
-                                                    AutoSizeText(
-                                                      'x1',
-                                                      style:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .titleLarge
-                                                              .override(
-                                                                fontFamily:
-                                                                    'Outfit',
-                                                                fontSize: 20.0,
-                                                              ),
-                                                    ),
-                                                    AutoSizeText(
-                                                      'x2',
-                                                      style:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .titleLarge
-                                                              .override(
-                                                                fontFamily:
-                                                                    'Outfit',
-                                                                fontSize: 20.0,
-                                                              ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
+                                      child:FutureBuilder<List>(
+                                        future: getData(),
+                                        builder: (ctx,ss) {
+                                          if(ss.hasError){
+                                            print("error");
+                                          }
+                                          if(ss.hasData){
+                                            return Items(list:ss.data);
+                                          }
+                                          else{
+                                            return CircularProgressIndicator();
+                                          }
+                                        },
                                       ),
                                     ),
                                   ),
@@ -298,7 +318,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                                                       ),
                                             ),
                                             AutoSizeText(
-                                              '30元',
+                                              widget.B['fee']+'元',
                                               style:
                                                   FlutterFlowTheme.of(context)
                                                       .titleLarge
@@ -310,25 +330,42 @@ class _Order1WidgetState extends State<Order1Widget> {
                                           ],
                                         ),
                                         Container(
-                                          width:
-                                              MediaQuery.sizeOf(context).width *
-                                                  1.0,
-                                          height: MediaQuery.sizeOf(context)
-                                                  .height *
-                                              0.08,
+                                          width: MediaQuery.sizeOf(context).width * 1.0,
+                                          height: MediaQuery.sizeOf(context).height * 0.08,
                                           decoration: BoxDecoration(
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryBackground,
                                           ),
-                                          child: AutoSizeText(
-                                            '店家地址 : 807高雄市三民區建工路415號',
+                                          child:FutureBuilder(
+                                            future: getData(),
+                                            builder: (ctx,ss) {
+                                              if(ss.hasError){
+                                                print("error");
+                                              }
+                                              if(ss.hasData){
+                                                return AutoSizeText(
+                                                  '店家地址 : '+orderContentList[0]["storeAddress"],
+                                                  style: FlutterFlowTheme.of(context)
+                                                      .titleLarge
+                                                      .override(
+                                                    fontFamily: 'Outfit',
+                                                    fontSize: 20.0,
+                                                  ),
+                                                );
+                                              }
+                                              else{
+                                                return CircularProgressIndicator();
+                                              }
+                                            },
+                                          ), /*AutoSizeText(
+                                            '店家地址 : '+orderContentList[0]["storeAddress"],
                                             style: FlutterFlowTheme.of(context)
                                                 .titleLarge
                                                 .override(
                                                   fontFamily: 'Outfit',
                                                   fontSize: 20.0,
                                                 ),
-                                          ),
+                                          ),*/
                                         ),
                                       ],
                                     ),
@@ -343,7 +380,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                                           .secondaryBackground,
                                     ),
                                     child: AutoSizeText(
-                                      '消費者地址 : 807高雄市三民區建工路415號',
+                                      '消費者地址 : '+myList[1],
                                       style: FlutterFlowTheme.of(context)
                                           .titleLarge
                                           .override(
@@ -360,7 +397,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                       ),
                       Container(
                         width: MediaQuery.sizeOf(context).width * 1.0,
-                        height: MediaQuery.sizeOf(context).height * 0.15,
+                        height: MediaQuery.sizeOf(context).height * 0.16,
                         constraints: BoxConstraints(
                           maxWidth: 430.0,
                         ),
@@ -397,7 +434,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                                       alignment:
                                           AlignmentDirectional(0.00, 0.00),
                                       child: Text(
-                                        '備註文字',
+                                        widget.B["note"],
                                         style: FlutterFlowTheme.of(context)
                                             .titleLarge,
                                       ),
@@ -411,7 +448,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                       ),
                       Container(
                         width: MediaQuery.sizeOf(context).width * 1.0,
-                        height: MediaQuery.sizeOf(context).height * 0.15,
+                        height: MediaQuery.sizeOf(context).height * 0.16,
                         constraints: BoxConstraints(
                           maxWidth: 430.0,
                         ),
@@ -439,7 +476,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                               ),
                               Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 24.0),
+                                    0.0, 6.0, 0.0, 18.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -448,7 +485,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                                       alignment:
                                           AlignmentDirectional(0.00, 0.00),
                                       child: Text(
-                                        '店家準備中，請準備取餐',
+                                        str,
                                         style: FlutterFlowTheme.of(context)
                                             .titleLarge,
                                       ),
@@ -694,6 +731,98 @@ class _Order1WidgetState extends State<Order1Widget> {
           ),
         ),
       ),
+    );
+  }
+}
+class Items extends StatelessWidget {
+
+  List? list;
+
+  Items({this.list});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: list!.length,  //列表的數量
+      itemBuilder: (ctx,i){    //列表的構建器
+        return Container(
+          width: MediaQuery.sizeOf(context).width *
+              1.0,
+          decoration: BoxDecoration(
+            color: FlutterFlowTheme.of(context)
+                .secondaryBackground,
+            borderRadius:
+            BorderRadius.circular(0.0),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment:
+            CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding:
+                EdgeInsetsDirectional.fromSTEB(
+                    0.0, 4.0, 0.0, 12.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment:
+                  MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Padding(
+                        padding:
+                        EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 4.0, 0.0),
+                        child: Column(
+                          mainAxisSize:
+                          MainAxisSize.max,
+                          mainAxisAlignment:
+                          MainAxisAlignment
+                              .center,
+                          crossAxisAlignment:
+                          CrossAxisAlignment
+                              .start,
+                          children: [
+                            AutoSizeText(
+                              list![i]["orderID"],
+                              style: FlutterFlowTheme
+                                  .of(context)
+                                  .titleLarge
+                                  .override(
+                                fontFamily:
+                                'Outfit',
+                                fontSize: 20.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Column(
+                      mainAxisSize:
+                      MainAxisSize.max,
+                      children: [
+                        AutoSizeText(
+                          "x"+list![i]["num"],
+                          style:
+                          FlutterFlowTheme.of(
+                              context)
+                              .titleLarge
+                              .override(
+                            fontFamily:
+                            'Outfit',
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

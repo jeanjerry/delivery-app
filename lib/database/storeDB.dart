@@ -38,7 +38,8 @@ class DBHelper {
             contract TEXT,
             id TEXT,
             storeName TEXT,
-            fee TEXT
+            fee TEXT,
+            storeAddress TEXT
           )
         ''');
         // 建立Orders表格

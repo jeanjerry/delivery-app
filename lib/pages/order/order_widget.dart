@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../order_1/order1_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -50,11 +51,11 @@ class _OrderWidgetState extends State<OrderWidget> {
   Future<List> getorderList() async {//從資料庫得到有幾筆已接訂單
 
     checkorderList = await dbHelper.dbGetcheckorder();
-    print(checkorderList.length);
+    print("已接訂單長度:"+checkorderList.length.toString());
+    await dbHelper.dbResetStores();// 重製訂單內容
     for(int i = 0; i<checkorderList.length;i++){
       var orderlist = await getOrder(checkorderList[i]["contract"],checkorderList[i]["id"]);
       //print("A$orderlist");
-      await dbHelper.dbResetStores();// 重製訂單內容
       Map<String, dynamic> A = {};//重要{}
       A['id']=checkorderList[i]['id'];
       A['consumer']=orderlist["consumer"].toString();
@@ -68,7 +69,7 @@ class _OrderWidgetState extends State<OrderWidget> {
       await dbHelper.dbInsertStore(A); // 將訂單內容插入資料庫
     }
     orderList = await dbHelper.dbGetStores();
-    print("B$orderList");
+    print(orderList);
     return orderList;
 
     /*for(int i=0 ; i<checkorderList.length; i++){
@@ -190,7 +191,7 @@ class _OrderWidgetState extends State<OrderWidget> {
                     children: [
                       Container(
                       width: MediaQuery.sizeOf(context).width * 1.0,
-                      height: MediaQuery.sizeOf(context).height * 0.16 ,
+                      height: MediaQuery.sizeOf(context).height * 1.0 ,
                       decoration: BoxDecoration(
                         color: Color(0xFFF1F4F8),
                         borderRadius: BorderRadius.circular(0.0),
@@ -410,9 +411,42 @@ class Items extends StatelessWidget {
       itemCount: list!.length,  //列表的數量
       itemBuilder: (ctx,i){    //列表的構建器
         List<String> myList =list![i]['consumer'].split(',');
+        String str = "";
+        getorderStatus()  {
+          String str = "";
+          if(list![i]["orderStatus"]=='2'){
+            str = "店家餐點準備中";
+          }
+          else if (list![i]["orderStatus"]=='3'){
+            str = "外送員已取餐";
+          }
+          else if (list![i]["orderStatus"]=='4'){
+            str = "外送員外送中";
+          }
+          else if (list![i]["orderStatus"]=='5'){
+            str = "等待客人收到餐點";
+          }
+          else if (list![i]["orderStatus"]=='6'){
+            str = "客人收到餐點";
+          }
+          else if (list![i]["orderStatus"]=='7'){
+            str = "店家拒絕出餐";
+          }
+          else if (list![i]["orderStatus"]=='10'){
+            str = "店家未完成餐點";
+          }
+          else if (list![i]["orderStatus"]=='11'){
+            str = "外送員未完成送餐";
+          }
+          else if (list![i]["orderStatus"]=='12'){
+            str = "取消訂單";
+          }
+          return str;
+        }
+        str = getorderStatus();
         return Container(
           width: MediaQuery.sizeOf(context).width * 1.0,
-          height: MediaQuery.sizeOf(context).height * 0.32,
+          height: MediaQuery.sizeOf(context).height * 0.38,
           decoration: BoxDecoration(
             color: Color(0xFFA1DAA1),
             boxShadow: [
@@ -430,7 +464,14 @@ class Items extends StatelessWidget {
             hoverColor: Colors.transparent,
             highlightColor: Colors.transparent,
             onTap: () async {
-              context.pushNamed('order-1');
+              Map<String, dynamic> B = await list![i];
+              //print("a$B");  //測試用
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => Order1Widget(B: B, ),
+                ),
+              );
+              //context.pushNamed('order-1');
             },
             child: Column(
               mainAxisSize: MainAxisSize.max,
@@ -498,21 +539,25 @@ class Items extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(
-                      10.0, 10.0, 10.0, 0.0),
+                  padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      AutoSizeText(
-                        '地址 :'+myList[1] ,
-                        style: FlutterFlowTheme.of(context)
-                            .bodyMedium
-                            .override(
-                          fontFamily: 'Readex Pro',
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.w500,
+                      Container(
+                        width: MediaQuery.sizeOf(context).width * 0.89,
+                        height: MediaQuery.sizeOf(context).height * 0.09,
+                        decoration: BoxDecoration(
+                          color: Color(0xFFA1DAA1),
                         ),
-                        minFontSize: 1.0,
+                        child: AutoSizeText(
+                          '地址 : '+myList[1],
+                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Readex Pro',
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          minFontSize: 1,
+                        ),
                       ),
                     ],
                   ),
@@ -565,7 +610,7 @@ class Items extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       AutoSizeText(
-                        '店家餐點準備中',
+                        "$str",
                         style: FlutterFlowTheme.of(context)
                             .bodyMedium
                             .override(
@@ -585,4 +630,8 @@ class Items extends StatelessWidget {
       },
     );
   }
+  /*getorderStatus() async {
+    if(list![i]["id"]){}
+
+  }*/
 }
