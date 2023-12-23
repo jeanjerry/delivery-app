@@ -57,7 +57,16 @@ class DBHelper {
         await db.execute('''
           CREATE TABLE IF NOT EXISTS checkorders (
             id TEXT,
-            contract TEXT
+            contract TEXT,
+            storeName TEXT,
+            fee TEXT
+          )
+        ''');
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS wallets (
+            orderStatus TEXT,
+            storeName TEXT,
+            fee TEXT
           )
         ''');
       },
@@ -68,6 +77,12 @@ class DBHelper {
   Future<void> dbInsertStore(Map<String, dynamic> store) async {
     final db = await database;
     await db.insert('stores', store);
+  }
+
+  // 在 wallets 表格中插入資料
+  Future<void> dbInsertwallet(Map<String, dynamic> wallet) async {
+    final db = await database;
+    await db.insert('wallets', wallet);
   }
 
   // 在 Order_content 表格中插入資料
@@ -82,7 +97,7 @@ class DBHelper {
     await db.insert('Orders', Order);
   }
 
-  // 在Order_numbers 表格中插入資料
+  // checkorders 表格中插入資料
   Future<void> dbInsertcheckorder(Map<String, dynamic> checkorder) async {
     final db = await database;
     await db.insert('checkorders', checkorder);
@@ -94,13 +109,19 @@ class DBHelper {
     return await db.query('stores');
   }
 
+  // 從 wallet 表格中獲得資料
+  Future<List<Map<String, dynamic>>> dbGetwallet() async {
+    final db = await database;
+    return await db.query('wallets');
+  }
+
   // 從 Order_contents 表格中獲得資料
   Future<List<Map<String, dynamic>>> dbGetOrder_content() async {
     final db = await database;
     return await db.query('Order_contents');
   }
 
-  // 從 Order_numbers 表格中獲得資料
+  // 從 checkorders 表格中獲得資料
   Future<List<Map<String, dynamic>>> dbGetcheckorder() async {
     final db = await database;
     return await db.query('checkorders');
@@ -130,10 +151,16 @@ class DBHelper {
     await db.delete('Orders');
   }
 
-  // 在 Order 表格中重置資料
+  // 在 checkorders 表格中重置資料
   Future<void> dbResetcheckorder() async {
     final db = await database;
     await db.delete('checkorders');
+  }
+
+  // 在 wallet 表格中重置資料
+  Future<void> dbResetwallet() async {
+    final db = await database;
+    await db.delete('wallets');
   }
 
 }

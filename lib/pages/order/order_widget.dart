@@ -191,7 +191,7 @@ class _OrderWidgetState extends State<OrderWidget> {
                     children: [
                       Container(
                       width: MediaQuery.sizeOf(context).width * 1.0,
-                      height: MediaQuery.sizeOf(context).height * 1.0 ,
+                      height: MediaQuery.sizeOf(context).height * 0.7 ,
                       decoration: BoxDecoration(
                         color: Color(0xFFF1F4F8),
                         borderRadius: BorderRadius.circular(0.0),
@@ -407,7 +407,50 @@ class Items extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    Widget divider0 = const Divider(
+      color: Colors.red,
+      thickness: 3,
+    );
+    Widget divider1 = const Divider(
+      color: Colors.orange,
+      thickness: 3,
+    );
+    Widget divider2 = Divider(
+      color: Colors.yellow.shade600,
+      thickness: 3,
+    );
+    Widget divider3 = const Divider(
+      color: Colors.green,
+      thickness: 3,
+    );
+    Widget divider4 = const Divider(
+      color: Colors.blue,
+      thickness: 3,
+    );
+    Widget divider5 = Divider(
+      color: Colors.blue.shade900,
+      thickness: 3,
+    );
+    Widget divider6 = const Divider(
+      color: Colors.purple,
+      thickness: 3,
+    );
+    Widget ChooseDivider(int index) {
+      return index % 7 == 0
+          ? divider0
+          : index % 7 == 1
+          ? divider1
+          : index % 7 == 2
+          ? divider2
+          : index % 7 == 3
+          ? divider3
+          : index % 7 == 4
+          ? divider4
+          : index % 7 == 5
+          ? divider5
+          : divider6;
+    }
+    return ListView.separated(
       itemCount: list!.length,  //列表的數量
       itemBuilder: (ctx,i){    //列表的構建器
         List<String> myList =list![i]['consumer'].split(',');
@@ -627,6 +670,9 @@ class Items extends StatelessWidget {
             ),
           ),
         );
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return ChooseDivider(index);
       },
     );
   }

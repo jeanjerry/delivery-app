@@ -114,6 +114,8 @@ class _Home1WidgetState extends State<Home1Widget> {
     Map<String, dynamic> A = {};//重要{}
     A['id']=widget.selectedItem['id'];
     A['contract']=widget.selectedItem['contract'];
+    A['storeName']=widget.selectedItem["storeName"];
+    A['fee']=widget.selectedItem["fee"];
     await dbHelper.dbInsertcheckorder(A); // 將訂單內容插入資料庫
     checkorderList = await dbHelper.dbGetcheckorder();
     print(checkorderList);

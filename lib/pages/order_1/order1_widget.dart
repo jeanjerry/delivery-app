@@ -92,6 +92,13 @@ class _Order1WidgetState extends State<Order1Widget> {
       return data;
     }
   }
+   var  address ;
+  Future Address()async{
+    var storeaddress = await getStore();
+    setState(() {
+      address =  storeaddress["storeAddress"];
+    });
+  }
 
   List<Map<String, dynamic>> orderContentList = []; // 訂單內容
 
@@ -119,6 +126,7 @@ class _Order1WidgetState extends State<Order1Widget> {
 
   @override
   void initState() {
+    future:Address();
     super.initState();
     _model = createModel(context, () => Order1Model());
     dbHelper = DBHelper(); // 初始化 DBHelper
@@ -336,36 +344,15 @@ class _Order1WidgetState extends State<Order1Widget> {
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryBackground,
                                           ),
-                                          child:FutureBuilder(
-                                            future: getData(),
-                                            builder: (ctx,ss) {
-                                              if(ss.hasError){
-                                                print("error");
-                                              }
-                                              if(ss.hasData){
-                                                return AutoSizeText(
-                                                  '店家地址 : '+orderContentList[0]["storeAddress"],
-                                                  style: FlutterFlowTheme.of(context)
-                                                      .titleLarge
-                                                      .override(
-                                                    fontFamily: 'Outfit',
-                                                    fontSize: 20.0,
-                                                  ),
-                                                );
-                                              }
-                                              else{
-                                                return CircularProgressIndicator();
-                                              }
-                                            },
-                                          ), /*AutoSizeText(
-                                            '店家地址 : '+orderContentList[0]["storeAddress"],
+                                          child: AutoSizeText(
+                                            '店家地址 : $address',
                                             style: FlutterFlowTheme.of(context)
                                                 .titleLarge
                                                 .override(
                                                   fontFamily: 'Outfit',
                                                   fontSize: 20.0,
                                                 ),
-                                          ),*/
+                                          ),
                                         ),
                                       ],
                                     ),
