@@ -44,6 +44,22 @@ class _OrderWidgetState extends State<OrderWidget> {
     }
   }
 
+  getStore(contractAddress) async {
+    var url = Uri.parse(ip+"contract/getStore");
+
+    final responce = await http.post(url,body: {
+
+      "contractAddress": contractAddress,
+      "wallet": FFAppState().account,
+
+    });
+    if (responce.statusCode == 200) {
+      var data = json.decode(responce.body);//將json解碼為陣列形式
+      //print("店家名稱:${data["storeName"].toString()}");
+      return data;
+    }
+  }
+
 
   List<Map<String, dynamic>> checkorderList = []; // 確定接單的訂單單號與店家合約
   List<Map<String, dynamic>> orderList = []; // 訂單內容
@@ -55,6 +71,7 @@ class _OrderWidgetState extends State<OrderWidget> {
     await dbHelper.dbResetStores();// 重製訂單內容
     for(int i = 0; i<checkorderList.length;i++){
       var orderlist = await getOrder(checkorderList[i]["contract"],checkorderList[i]["id"]);
+      var storeaddress = await getStore(checkorderList[i]['contract']);
       //print("A$orderlist");
       Map<String, dynamic> A = {};//重要{}
       A['id']=checkorderList[i]['id'];
@@ -66,6 +83,7 @@ class _OrderWidgetState extends State<OrderWidget> {
       A['delivery'] = A['delivery'].replaceAll(RegExp(r'^\[|\]$'), '');
       A['orderStatus']=orderlist["orderStatus"];
       A['contract']=checkorderList[i]['contract'];
+      A['storeAddress']=storeaddress["storeAddress"];
       await dbHelper.dbInsertStore(A); // 將訂單內容插入資料庫
     }
     orderList = await dbHelper.dbGetStores();
@@ -458,28 +476,28 @@ class Items extends StatelessWidget {
         getorderStatus()  {
           String str = "";
           if(list![i]["orderStatus"]=='2'){
-            str = "店家餐點準備中";
+            str = "店家準備中";
           }
           else if (list![i]["orderStatus"]=='3'){
-            str = "外送員已取餐";
+            str = "外送員前往取餐";
           }
           else if (list![i]["orderStatus"]=='4'){
-            str = "外送員外送中";
+            str = "外送員前往送餐";
           }
           else if (list![i]["orderStatus"]=='5'){
-            str = "等待客人收到餐點";
+            str = "等待消費者確認餐點";
           }
           else if (list![i]["orderStatus"]=='6'){
-            str = "客人收到餐點";
+            str = "已送達";
           }
           else if (list![i]["orderStatus"]=='7'){
-            str = "店家拒絕出餐";
+            str = "店家拒絕接單";
           }
           else if (list![i]["orderStatus"]=='10'){
-            str = "店家未完成餐點";
+            str = "店家未完成訂單";
           }
           else if (list![i]["orderStatus"]=='11'){
-            str = "外送員未完成送餐";
+            str = "外送員未完成訂單";
           }
           else if (list![i]["orderStatus"]=='12'){
             str = "取消訂單";

@@ -30,6 +30,7 @@ class _WalletWidgetState extends State<WalletWidget>
   late DBHelper dbHelper;// DBHelper 實例
 
   var money;
+
   Future getBalance() async {
     var url = Uri.parse(ip+"getBalance");
 
@@ -41,13 +42,10 @@ class _WalletWidgetState extends State<WalletWidget>
     if (responce.statusCode == 200) {
       var data = json.decode(responce.body);//將json解碼為陣列形式
       var wallet;
+      wallet=data["balance"];
       setState(() {
-        wallet=data["balance"];
         if (wallet != null) {
-          setState(() {
-            // 將獲取的餘額轉換為以太幣並更新 UI
-            money = (double.parse(wallet) / pow(10, 18)).toString();
-          });
+            money = (double.parse(wallet) / pow(10, 18)).toString();// 將獲取的餘額轉換為以太幣並更新 UI
         }
       });
 
@@ -89,9 +87,9 @@ class _WalletWidgetState extends State<WalletWidget>
   List<Map<String, dynamic>> checkorderList = []; // 確定接單的訂單單號與店家合約
   List<Map<String, dynamic>> orderList = []; // 訂單內容
 
-  Future<List> getorderList() async {   //從資料庫得到完成訂單的小費
+  Future<List> getorderList1() async {   //從資料庫得到完成訂單的小費
     checkorderList = await dbHelper.dbGetcheckorder();
-    print("已接訂單長度:"+checkorderList.length.toString());
+    print("已接訂單長度是:"+checkorderList.length.toString());
     await dbHelper.dbResetwallet();// 重製訂單內容
     for(int i = 0; i<checkorderList.length;i++){
       var orderlist = await getOrder(checkorderList[i]["contract"],checkorderList[i]["id"]);
@@ -103,8 +101,9 @@ class _WalletWidgetState extends State<WalletWidget>
         A['fee']=orderlist["fee"];
         await dbHelper.dbInsertwallet(A);
       }
-      orderList = await dbHelper.dbGetwallet(); // 更新訂單內
     }
+    orderList = await dbHelper.dbGetwallet(); // 更新訂單內
+    print(orderList);
     return orderList;
   }
 
@@ -173,12 +172,13 @@ class _WalletWidgetState extends State<WalletWidget>
       ],
     ),
   };
-
+  Future<List>? _orderListFuture;
   @override
   void initState() {
     future:getBalance();
     dbHelper = DBHelper(); // 初始化 DBHelper
     super.initState();
+    _orderListFuture = getorderList1();
     _model = createModel(context, () => WalletModel());
 
     setupAnimations(
@@ -326,14 +326,14 @@ class _WalletWidgetState extends State<WalletWidget>
                           padding: EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 0.0, 1.0),
                           child: Container(
-                            width: MediaQuery.sizeOf(context).width * 1.0,
+                            width: MediaQuery.sizeOf(context).width * 0.9,
                             height: MediaQuery.sizeOf(context).height * 1.0,
                             decoration: BoxDecoration(
                               color: Color(0xFFF1F4F8),
                               borderRadius: BorderRadius.circular(0.0),
                             ),
                             child:FutureBuilder<List>(
-                              future: getorderList(),
+                              future: _orderListFuture,
                               builder: (ctx,ss) {
                                 if(ss.hasError){
                                   print("error");
@@ -347,61 +347,6 @@ class _WalletWidgetState extends State<WalletWidget>
                               },
                             ),
                           ),
-                          /*Container(
-                            width: MediaQuery.sizeOf(context).width * 0.9,
-                            height: MediaQuery.sizeOf(context).height * 0.1,
-                            decoration: BoxDecoration(
-                              color: FlutterFlowTheme.of(context).info,
-                              boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 0.0,
-                                  color: FlutterFlowTheme.of(context).alternate,
-                                  offset: Offset(5.0, 5.0),
-                                )
-                              ],
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  16.0, 8.0, 16.0, 8.0),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          12.0, 0.0, 0.0, 0.0),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          AutoSizeText(
-                                            '店家名稱',
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyLarge
-                                                .override(
-                                                  fontFamily: 'Readex Pro',
-                                                  fontSize: 22.0,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  AutoSizeText(
-                                    '\$8.20',
-                                    textAlign: TextAlign.end,
-                                    style:
-                                        FlutterFlowTheme.of(context).titleLarge,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),*/
                         ),
                       ],
                     ),

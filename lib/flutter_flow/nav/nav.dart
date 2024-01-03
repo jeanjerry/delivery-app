@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:delivery_a_p_p/pages/message/message_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
+import '../../pages/message_1/message1_widget.dart';
 import '/index.dart';
 import '/main.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -83,6 +85,16 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => params.isEmpty
               ? NavBarPage(initialPage: 'setting')
               : SettingWidget(),
+        ),
+        FFRoute(
+          name: 'message',
+          path: '/message',
+          builder: (context, params) => MessageWidget(C: {},),
+        ),
+        FFRoute(
+          name: 'message-1',
+          path: '/message1',
+          builder: (context, params) => Message1Widget(D: {},),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

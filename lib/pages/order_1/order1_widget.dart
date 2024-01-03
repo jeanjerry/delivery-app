@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
+import '../message/message_widget.dart';
+import '../message_1/message1_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -13,6 +16,11 @@ export 'order1_model.dart';
 import 'package:http/http.dart' as http;
 import '/main.dart';
 import '/database/storeDB.dart'; // 引入自定義的 SQL 檔案
+
+
+
+
+
 
 class Order1Widget extends StatefulWidget {
   const Order1Widget({Key? key, required this.B}) : super(key: key);
@@ -92,13 +100,7 @@ class _Order1WidgetState extends State<Order1Widget> {
       return data;
     }
   }
-   var  address ;
-  Future Address()async{
-    var storeaddress = await getStore();
-    setState(() {
-      address =  storeaddress["storeAddress"];
-    });
-  }
+
 
   List<Map<String, dynamic>> orderContentList = []; // 訂單內容
 
@@ -126,7 +128,6 @@ class _Order1WidgetState extends State<Order1Widget> {
 
   @override
   void initState() {
-    future:Address();
     super.initState();
     _model = createModel(context, () => Order1Model());
     dbHelper = DBHelper(); // 初始化 DBHelper
@@ -345,13 +346,13 @@ class _Order1WidgetState extends State<Order1Widget> {
                                                 .secondaryBackground,
                                           ),
                                           child: AutoSizeText(
-                                            '店家地址 : $address',
+                                            '店家地址 : '+ widget.B["storeAddress"],
                                             style: FlutterFlowTheme.of(context)
                                                 .titleLarge
                                                 .override(
-                                                  fontFamily: 'Outfit',
-                                                  fontSize: 20.0,
-                                                ),
+                                              fontFamily: 'Outfit',
+                                              fontSize: 20.0,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -488,8 +489,16 @@ class _Order1WidgetState extends State<Order1Widget> {
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                         child: FFButtonWidget(
-                          onPressed: () {
-                            print('Button pressed ...');
+                          onPressed: () async {
+                            Map<String, dynamic> C = {};
+                            C['contract']=widget.B['contract'];
+                            C['id']=widget.B['id'];
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => MessageWidget(C: C, ),
+                              ),
+                            );
+                            //context.pushNamed('message');
                           },
                           text: '傳送訊息給消費者',
                           options: FFButtonOptions(
@@ -526,8 +535,15 @@ class _Order1WidgetState extends State<Order1Widget> {
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                         child: FFButtonWidget(
-                          onPressed: () {
-                            print('Button pressed ...');
+                          onPressed: () async {
+                            Map<String, dynamic> D = {};
+                            D['contract']=widget.B['contract'];
+                            D['id']=widget.B['id'];
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => Message1Widget(D: D, ),
+                              ),
+                            );
                           },
                           text: '傳送訊息給店家',
                           options: FFButtonOptions(
@@ -609,7 +625,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                       ),
                       Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
+                        EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                         child: FFButtonWidget(
                           onPressed: () {
                             print('Button pressed ...');
@@ -626,9 +642,9 @@ class _Order1WidgetState extends State<Order1Widget> {
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleLarge
                                 .override(
-                                  fontFamily: 'Outfit',
-                                  fontWeight: FontWeight.w600,
-                                ),
+                              fontFamily: 'Outfit',
+                              fontWeight: FontWeight.w600,
+                            ),
                             elevation: 2.0,
                             borderSide: BorderSide(
                               color: Colors.transparent,
@@ -641,7 +657,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                               width: 1.0,
                             ),
                             hoverTextColor:
-                                FlutterFlowTheme.of(context).primary,
+                            FlutterFlowTheme.of(context).primary,
                           ),
                         ),
                       ),

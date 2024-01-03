@@ -27,7 +27,8 @@ class DBHelper {
             note TEXT,
             delivery TEXT,
             orderStatus TEXT,
-            contract TEXT
+            contract TEXT,
+            storeAddress TEXT
           )
         ''');
         // 建立Order_content表格
