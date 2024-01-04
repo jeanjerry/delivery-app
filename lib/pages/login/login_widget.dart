@@ -14,6 +14,7 @@ import 'login_model.dart';
 export 'login_model.dart';
 import 'package:http/http.dart' as http;
 import '/main.dart';
+import 'package:delivery_a_p_p/google_api.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({Key? key}) : super(key: key);
@@ -58,6 +59,7 @@ class _LoginWidgetState extends State<LoginWidget>
     if (responce.statusCode == 200) {
       var data = json.decode(responce.body);//將json解碼為陣列形式
       print("帳號是否正確:${data['result'].toString()}");
+      //await GoogleDriveHelper.downloadImage("1Odx8zVNfk_A5z7-S4BZK2ZaW0xOPbXGt","/data/data/com.mycompany.deliveryapp/image","a");
       if(data['result']==false){
         await showDialog(
           context: context,

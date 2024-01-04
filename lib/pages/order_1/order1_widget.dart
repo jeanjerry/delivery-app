@@ -56,28 +56,28 @@ class _Order1WidgetState extends State<Order1Widget> {
   getorderStatus()  {
     String str = "";
     if(widget.B["orderStatus"]=='2'){
-      str = "店家餐點準備中";
+      str = "店家準備中";
     }
     else if (widget.B["orderStatus"]=='3'){
-      str = "外送員已取餐";
+      str = "外送員前往取餐";
     }
     else if (widget.B["orderStatus"]=='4'){
-      str = "外送員外送中";
+      str = "外送員前往送餐";
     }
     else if (widget.B["orderStatus"]=='5'){
-      str = "等待客人收到餐點";
+      str = "等待消費者確認餐點";
     }
     else if (widget.B["orderStatus"]=='6'){
-      str = "客人收到餐點";
+      str = "已送達";
     }
     else if (widget.B["orderStatus"]=='7'){
-      str = "店家拒絕出餐";
+      str = "店家拒絕接單";
     }
     else if (widget.B["orderStatus"]=='10'){
-      str = "店家未完成餐點";
+      str = "店家未完成訂單";
     }
     else if (widget.B["orderStatus"]=='11'){
-      str = "外送員未完成送餐";
+      str = "外送員未完成訂單";
     }
     else if (widget.B["orderStatus"]=='12'){
       str = "取消訂單";
@@ -500,7 +500,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                             );
                             //context.pushNamed('message');
                           },
-                          text: '傳送訊息給消費者',
+                          text: '聊天室',
                           options: FFButtonOptions(
                             width: MediaQuery.sizeOf(context).width * 1.0,
                             height: MediaQuery.sizeOf(context).height * 0.06,
@@ -531,7 +531,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                           ),
                         ),
                       ),
-                      Padding(
+                      /*Padding(
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                         child: FFButtonWidget(
@@ -575,7 +575,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                                 FlutterFlowTheme.of(context).primary,
                           ),
                         ),
-                      ),
+                      ),*/
                       Container(
                         width: MediaQuery.sizeOf(context).width * 1.0,
                         height: MediaQuery.sizeOf(context).height * 0.2,

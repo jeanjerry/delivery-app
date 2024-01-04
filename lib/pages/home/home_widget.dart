@@ -1,5 +1,9 @@
 import 'dart:convert';
+import 'dart:math';
 
+import 'package:flutter/foundation.dart';
+
+import '../../google_api.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -137,11 +141,23 @@ class _HomeWidgetState extends State<HomeWidget> {
           if (availableOrderID != null) {
             print("${contracts[i]} 店家的可接單號 ID 為: $availableOrderID");
             for(int j = 0; j < availableOrderID.length; j++){
+              if (name['storeImageLink'] != "") {
+                try {
+                  await GoogleDriveHelper.downloadImage(
+                      name['storeImageLink']!,
+                      '/data/data/com.mycompany.deliveryapp/image',
+                      name['contract']);
+                } catch (e) {
+                  if (kDebugMode) {
+                    print(e);
+                  }
+                }
+              }
               var ORDER = await getOrder(contracts[i],availableOrderID[j]);
                 Map<String, dynamic> A = {};//重要{}
                 A['id']=availableOrderID[j];
                 A['storeName']=name["storeName"];
-                A['fee']=ORDER["fee"];
+                A['fee']=(double.parse(ORDER["fee"]) / pow(10, 18)).toString();
                 A['contract']=contracts[i];
                 A['foodCost']=ORDER["foodCost"];
                 A['note']=ORDER["note"];

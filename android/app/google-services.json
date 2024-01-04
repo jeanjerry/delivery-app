@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1009101534499",
+    "project_id": "delivert-app",
+    "storage_bucket": "delivert-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1009101534499:android:9c397893e611666b5e8896",
+        "android_client_info": {
+          "package_name": "com.mycompany.deliveryapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsj_-JB6pdyeEvH_qdps9v8tctYaDdE0U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

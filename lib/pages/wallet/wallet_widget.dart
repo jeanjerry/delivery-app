@@ -17,6 +17,7 @@ export 'wallet_model.dart';
 import '/main.dart';
 import 'package:http/http.dart' as http;
 import '/database/storeDB.dart'; // 引入自定義的 SQL 檔案
+import 'package:decimal/decimal.dart';
 
 class WalletWidget extends StatefulWidget {
   const WalletWidget({Key? key}) : super(key: key);
@@ -98,7 +99,9 @@ class _WalletWidgetState extends State<WalletWidget>
       if(orderlist["orderStatus"] == "6"){
         A['orderStatus']=orderlist["orderStatus"];
         A['storeName']=name["storeName"];
-        A['fee']=orderlist["fee"];
+        A['fee']=(Decimal.parse(orderlist["fee"]) / Decimal.parse('1e18'))
+            .toDouble()
+            .toString();
         await dbHelper.dbInsertwallet(A);
       }
     }

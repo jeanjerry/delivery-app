@@ -116,6 +116,13 @@ class FFAppState extends ChangeNotifier {
     _email = _value;
     prefs.setString('ff_email', _value);
   }
+
+  String _people = '';
+  String get people => _people;
+  set people(String _value) {
+    _people = _value;
+    prefs.setString('ff_people', _value);
+  }
 }
 
 LatLng? _latLngFromString(String? val) {

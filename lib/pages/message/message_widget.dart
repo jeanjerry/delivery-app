@@ -5,14 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../../flutter_flow/flutter_flow_drop_down.dart';
 import '../../flutter_flow/flutter_flow_model.dart';
 import '../../flutter_flow/flutter_flow_theme.dart';
 import '../../flutter_flow/flutter_flow_util.dart';
+import '../../flutter_flow/form_field_controller.dart';
 import 'message_model.dart';
 export 'message_model.dart';
 import 'package:http/http.dart' as http;
 import '/main.dart';
 import '/database/storeDB.dart'; // 引入自定義的 SQL 檔案
+
 
 class MessageWidget extends StatefulWidget {
   const MessageWidget({Key? key, required this.C}) : super(key: key);
@@ -43,10 +46,12 @@ class _MessageWidgetState extends State<MessageWidget> {
       for (var message in data["message"]) {
         // 判斷 message[0] 的值是否為 "3" 或 "1"
         // 判斷 message[1] 的值是否為 "2"
-        if ((message[0] == "3" && message[1] == "2") || (message[0] == "2" && message[1] == "3")) {
+        /*if ((message[0] == "3" && message[1] == "2") || (message[0] == "2" && message[1] == "3")) {
           // 將符合條件的 message 轉換為 [3, 2, message[2]]
           filteredMessages.add([message[0],message[1],message[2]]);
-        }
+        }*/
+
+          filteredMessages.add([message[0],message[1],message[2]]);
       }
 
       //print(filteredMessages);
@@ -62,14 +67,20 @@ class _MessageWidgetState extends State<MessageWidget> {
 
   sendMessage() async {
     var url = Uri.parse(ip + "contract/sendMessage");
-
+    var people ;
+    if(FFAppState().people=="消費者"){
+      people = "2";
+    }
+    else if (FFAppState().people=="店家"){
+      people = "1";
+    }
     final response = await http.post(url, body: {
       "contractAddress": widget.C["contract"],
       "wallet": FFAppState().account,
       "password": FFAppState().password,
       "id": widget.C["id"],
       "sender": "3",
-      "receiver": "2",
+      "receiver": people,
       "messageContent": _model.messagController.text,
     });
 
@@ -191,6 +202,44 @@ class _MessageWidgetState extends State<MessageWidget> {
                         ),
                       ),
                       Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                        child: FlutterFlowDropDown<String>(
+                          controller: _model.dropDownValueController ??=
+                              FormFieldController<String>(
+                                _model.dropDownValue ??= FFAppState().people,
+                              ),
+                          options: ['消費者', '店家'],
+                          onChanged: (val) async {
+                            setState(() => _model.dropDownValue = val);
+                            setState(() {
+                              FFAppState().people = _model.dropDownValue!;
+                            });
+                          },
+                          width: MediaQuery.sizeOf(context).width * 0.8,
+                          height: MediaQuery.sizeOf(context).height * 0.08,
+                          textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Readex Pro',
+                            fontSize: 20,
+                          ),
+                          hintText: '請選擇對話對象',
+                          icon: Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            color: FlutterFlowTheme.of(context).secondaryText,
+                            size: 24,
+                          ),
+                          fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                          elevation: 2,
+                          borderColor: FlutterFlowTheme.of(context).alternate,
+                          borderWidth: 2,
+                          borderRadius: 8,
+                          margin: EdgeInsetsDirectional.fromSTEB(16, 4, 16, 4),
+                          hidesUnderline: true,
+                          isOverButton: true,
+                          isSearchable: false,
+                          isMultiSelect: false,
+                        ),
+                      ),
+                      Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 5),
                         child: Container(
                           width: MediaQuery.sizeOf(context).width,
@@ -216,7 +265,7 @@ class _MessageWidgetState extends State<MessageWidget> {
                                   .labelMedium
                                   .override(
                                 fontFamily: 'Readex Pro',
-                                fontSize: 16,
+                                fontSize: 20,
                               ),
                               hintStyle:
                               FlutterFlowTheme.of(context).labelMedium,
@@ -301,9 +350,21 @@ class Items extends StatelessWidget {
         who() {
           String str = "";
           if (list![i][0] == '2' && list![i][1] == '3') {
-            str = "消費者 :";
+            str = "消費者對外送員 :";
           } else if (list![i][0] == '3' && list![i][1] == '2') {
-            str = "外送員 :";
+            str = "外送員對消費者 :";
+          }
+          else if (list![i][0] == '1' && list![i][1] == '2') {
+            str = "店家對消費者 :";
+          }
+          else if (list![i][0] == '2' && list![i][1] == '1') {
+            str = "消費者對店家 :";
+          }
+          else if (list![i][0] == '3' && list![i][1] == '1') {
+            str = "外送員對店家 :";
+          }
+          else if (list![i][0] == '1' && list![i][1] == '3') {
+            str = "店家對外送員 :";
           }
           return str;
         }

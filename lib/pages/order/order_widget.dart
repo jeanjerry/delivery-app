@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import '../order_1/order1_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -14,6 +15,7 @@ export 'order_model.dart';
 import 'package:http/http.dart' as http;
 import '/main.dart';
 import '/database/storeDB.dart'; // 引入自定義的 SQL 檔案
+import 'package:decimal/decimal.dart';
 
 class OrderWidget extends StatefulWidget {
   const OrderWidget({Key? key, required this.A}) : super(key: key);
@@ -77,7 +79,9 @@ class _OrderWidgetState extends State<OrderWidget> {
       A['id']=checkorderList[i]['id'];
       A['consumer']=orderlist["consumer"].toString();
       A['consumer'] = A['consumer'].replaceAll(RegExp(r'^\[|\]$'), '');
-      A['fee']=orderlist["fee"];
+      A['fee']=(Decimal.parse(orderlist["fee"]) / Decimal.parse('1e18'))
+        .toDouble()
+        .toString();
       A['note']=orderlist['note'];
       A['delivery']=orderlist["delivery"].toString();
       A['delivery'] = A['delivery'].replaceAll(RegExp(r'^\[|\]$'), '');
@@ -507,7 +511,7 @@ class Items extends StatelessWidget {
         str = getorderStatus();
         return Container(
           width: MediaQuery.sizeOf(context).width * 1.0,
-          height: MediaQuery.sizeOf(context).height * 0.38,
+          height: MediaQuery.sizeOf(context).height * 0.28,
           decoration: BoxDecoration(
             color: Color(0xFFA1DAA1),
             boxShadow: [
@@ -587,7 +591,7 @@ class Items extends StatelessWidget {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       AutoSizeText(
-                        '外送費 : '+list![i]["fee"]+'元',
+                        '外送費 : '+list![i]["fee"]+'  Eth',
                         style: FlutterFlowTheme.of(context)
                             .bodyMedium
                             .override(
@@ -623,7 +627,7 @@ class Items extends StatelessWidget {
                     ],
                   ),
                 ),
-                Padding(
+                /*Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(
                       10.0, 10.0, 10.0, 0.0),
                   child: Row(
@@ -662,7 +666,7 @@ class Items extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
+                ),*/
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(
                       10.0, 10.0, 10.0, 0.0),
