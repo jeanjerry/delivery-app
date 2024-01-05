@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -138,21 +139,20 @@ class _HomeWidgetState extends State<HomeWidget> {
         if (result == true) {
           List availableOrderID = await getAvailableOrder(contracts[i]);
           var name = await getStore(contracts[i]);
+          print(name['storeImageLink']);
+          if (name['storeImageLink']!= " ") {
+            await GoogleDriveHelper.downloadImage(
+                name['storeImageLink'].toString(),
+                "/data/data/com.mycompany.deliveryapp/image",
+                contracts[i]);
+            print("ok");
+          }
+          else{
+            print("no");
+          }
           if (availableOrderID != null) {
             print("${contracts[i]} 店家的可接單號 ID 為: $availableOrderID");
             for(int j = 0; j < availableOrderID.length; j++){
-              if (name['storeImageLink'] != "") {
-                try {
-                  await GoogleDriveHelper.downloadImage(
-                      name['storeImageLink']!,
-                      '/data/data/com.mycompany.deliveryapp/image',
-                      name['contract']);
-                } catch (e) {
-                  if (kDebugMode) {
-                    print(e);
-                  }
-                }
-              }
               var ORDER = await getOrder(contracts[i],availableOrderID[j]);
                 Map<String, dynamic> A = {};//重要{}
                 A['id']=availableOrderID[j];
@@ -439,14 +439,12 @@ class Items extends StatelessWidget {
                   },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
-                  child: Image.network(
-                    'https://i.epochtimes.com/assets/uploads/2022/05/id13748758-557776.png',
-                    width:
-                    MediaQuery.sizeOf(context).width * 1.0,
-                    height:
-                    MediaQuery.sizeOf(context).height * 1.0,
+                  child: Image.file(
+                    File("/data/data/com.mycompany.deliveryapp/image/${list![i]['contract']}"),
+                    width: MediaQuery.sizeOf(context).width * 1.0,
+                    height: MediaQuery.sizeOf(context).height * 1.0,
                     fit: BoxFit.cover,
-                    ),
+                  ),
                   ),
                 ),
               ),
