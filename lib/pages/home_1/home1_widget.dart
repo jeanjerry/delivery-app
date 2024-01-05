@@ -15,6 +15,7 @@ export 'home1_model.dart';
 import 'package:http/http.dart' as http;
 import '/main.dart';
 import '/database/storeDB.dart'; // 引入自定義的 SQL 檔案
+import 'package:decimal/decimal.dart';
 
 class Home1Widget extends StatefulWidget {
 
@@ -342,7 +343,9 @@ class _Home1WidgetState extends State<Home1Widget> {
                                             mainAxisAlignment: MainAxisAlignment.end,
                                             children: [
                                               Text(
-                                                "總金額 : "+widget.selectedItem["foodCost"]+" 元 ",
+                                                "總金額 : "+(Decimal.parse(widget.selectedItem["foodCost"]) / Decimal.parse('1e18'))
+                                                    .toDouble()
+                                                    .toString()+" Eth",
                                                 style: FlutterFlowTheme.of(context).titleLarge.override(
                                                   fontFamily: 'Outfit',
                                                   fontSize: 22,
