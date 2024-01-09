@@ -67,7 +67,7 @@ class _OrderWidgetState extends State<OrderWidget> {
   List<Map<String, dynamic>> orderList = []; // 訂單內容
 
   Future<List> getorderList() async {//從資料庫得到有幾筆已接訂單
-
+    orderList.clear();
     checkorderList = await dbHelper.dbGetcheckorder();
     print("已接訂單長度:"+checkorderList.length.toString());
     await dbHelper.dbResetStores();// 重製訂單內容

@@ -59,6 +59,9 @@ dependencies:
   google_sign_in: ^6.2.1
   decimal: ^2.3.3
   dropdown_button2: ^2.3.9
+  image_picker: ^1.0.6
+  mailer: ^6.0.1
+
 
 
   # The following adds the Cupertino Icons font to your application.

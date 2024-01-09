@@ -16,6 +16,10 @@ export 'order1_model.dart';
 import 'package:http/http.dart' as http;
 import '/main.dart';
 import '/database/storeDB.dart'; // 引入自定義的 SQL 檔案
+import 'package:image_picker/image_picker.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server/gmail.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 
@@ -53,34 +57,86 @@ class _Order1WidgetState extends State<Order1Widget> {
     }
   }
 
+  confirmPickUp() async {
+    var url = Uri.parse(ip+"contract/confirmPickUp");
+
+    final responce = await http.post(url,body: {
+
+      "contractAddress": widget.B["contract"],
+      "deliveryWallet": FFAppState().account,
+      "deliveryPassword": FFAppState().password,
+      "id": widget.B["id"],
+
+    });
+    if (responce.statusCode == 200) {
+      var data = json.decode(responce.body);//將json解碼為陣列形式
+      return data;
+    }
+  }
+
+  confirmDelivery() async {
+    var url = Uri.parse(ip+"contract/confirmDelivery");
+
+    final responce = await http.post(url,body: {
+
+      "contractAddress": widget.B["contract"],
+      "deliveryWallet": FFAppState().account,
+      "deliveryPassword": FFAppState().password,
+      "id": widget.B["id"],
+
+    });
+    if (responce.statusCode == 200) {
+      var data = json.decode(responce.body);//將json解碼為陣列形式
+      return data;
+    }
+  }
+
   getorderStatus()  {
     String str = "";
     if(widget.B["orderStatus"]=='2'){
+      setState(() {
       str = "店家準備中";
+      });
     }
     else if (widget.B["orderStatus"]=='3'){
+      setState(() {
       str = "外送員前往取餐";
+      });
     }
     else if (widget.B["orderStatus"]=='4'){
+      setState(() {
       str = "外送員前往送餐";
+      });
     }
     else if (widget.B["orderStatus"]=='5'){
-      str = "等待消費者確認餐點";
+        setState(() {
+        str = "等待消費者確認餐點";
+        });
     }
     else if (widget.B["orderStatus"]=='6'){
-      str = "已送達";
+          setState(() {
+          str = "已送達";
+          });
     }
     else if (widget.B["orderStatus"]=='7'){
+      setState(() {
       str = "店家拒絕接單";
+      });
     }
     else if (widget.B["orderStatus"]=='10'){
+      setState(() {
       str = "店家未完成訂單";
+      });
     }
     else if (widget.B["orderStatus"]=='11'){
+      setState(() {
       str = "外送員未完成訂單";
+      });
     }
     else if (widget.B["orderStatus"]=='12'){
+      setState(() {
       str = "取消訂單";
+      });
     }
     return str;
   }
@@ -576,59 +632,92 @@ class _Order1WidgetState extends State<Order1Widget> {
                           ),
                         ),
                       ),*/
-                      Container(
-                        width: MediaQuery.sizeOf(context).width * 1.0,
-                        height: MediaQuery.sizeOf(context).height * 0.2,
-                        constraints: BoxConstraints(
-                          maxWidth: 430.0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 4.0,
-                              color: Color(0x33000000),
-                              offset: Offset(0.0, 6.0),
-                            )
-                          ],
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
-                              16.0, 16.0, 16.0, 24.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 24.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Align(
-                                      alignment:
-                                          AlignmentDirectional(0.00, 0.00),
-                                      child: Text(
-                                        '路程',
-                                        style: FlutterFlowTheme.of(context)
-                                            .titleLarge,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                      InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () async {
+                          final Uri _url = Uri.parse('https://www.google.com/maps'); // 你可以在这里设置特定的位置或搜索
+                          if (await launchUrl(_url)) {
+                            await launchUrl(_url);
+                          } else {
+                            throw 'Could not launch $_url';
+                          }
+                        },
+                        child: Container(
+                          width: MediaQuery.sizeOf(context).width,
+                          height: MediaQuery.sizeOf(context).height * 0.18,
+                          constraints: BoxConstraints(
+                            maxWidth: 430,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                blurRadius: 4,
+                                color: Color(0x33000000),
+                                offset: Offset(0, 6),
+                              )
                             ],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 24),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 24),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Align(
+                                        alignment: AlignmentDirectional(0, 0),
+                                        child: Text(
+                                          '路程',
+                                          style: FlutterFlowTheme.of(context).titleLarge,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                       Padding(
-                        padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
+                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                         child: FFButtonWidget(
-                          onPressed: () {
-                            print('Button pressed ...');
+                          onPressed: () async {
+                            // 打开相機
+                            final image = await ImagePicker().pickImage(source: ImageSource.camera);
+
+                            if (image != null) {
+                              // 郵件發送
+                              final smtpServer = gmail('C109154229@nkust.edu.tw', 'N126771748');
+
+                              final message = Message()
+                                ..from = Address('C109154229@nkust.edu.tw', '彥傑')
+                                ..recipients.add('jeanyjyjyjyjyj@gmail.com')
+                                ..subject = '主题'
+                                ..text = '正文'
+                                ..attachments.add(FileAttachment(File(image.path)));
+
+                              try {
+                                final sendReport = await send(message, smtpServer);
+                                print('郵件發送成功：$sendReport');
+                                await confirmPickUp();
+                                print("更改狀態收餐");
+                              } catch (e) {
+                                print('郵件發送失败：$e');
+                              }
+                            } else {
+                              print('用户取消了拍照');
+                            }
                           },
                           text: '拍照進行收餐確認',
                           options: FFButtonOptions(
@@ -665,8 +754,32 @@ class _Order1WidgetState extends State<Order1Widget> {
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                         child: FFButtonWidget(
-                          onPressed: () {
-                            print('Button pressed ...');
+                          onPressed: () async {
+                            // 打开相機
+                            final image = await ImagePicker().pickImage(source: ImageSource.camera);
+
+                            if (image != null) {
+                              // 郵件發送
+                              final smtpServer = gmail('C109154229@nkust.edu.tw', 'N126771748');
+
+                              final message = Message()
+                                ..from = Address('C109154229@nkust.edu.tw', '彥傑')
+                                ..recipients.add('jeanyjyjyjyjyj@gmail.com')
+                                ..subject = '主题'
+                                ..text = '正文'
+                                ..attachments.add(FileAttachment(File(image.path)));
+
+                              try {
+                                final sendReport = await send(message, smtpServer);
+                                print('郵件發送成功：$sendReport');
+                                await confirmDelivery();
+                                print("更改狀態送達");
+                              } catch (e) {
+                                print('郵件發送失败：$e');
+                              }
+                            } else {
+                              print('用户取消了拍照');
+                            }
                           },
                           text: '拍照進行送達確認',
                           options: FFButtonOptions(
@@ -718,10 +831,10 @@ class _Order1WidgetState extends State<Order1Widget> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
-                          child: Image.network(
-                            'https://i.epochtimes.com/assets/uploads/2022/05/id13748758-557776.png',
+                          child: Image.file(
+                            File("/data/data/com.mycompany.deliveryapp/image/${widget.B["contract"]}"),
                             width: MediaQuery.sizeOf(context).width * 1.0,
-                            height: MediaQuery.sizeOf(context).height * 0.1,
+                            height: MediaQuery.sizeOf(context).height * 1.0,
                             fit: BoxFit.cover,
                           ),
                         ),
