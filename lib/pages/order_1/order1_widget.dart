@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:geocoding/geocoding.dart';
+
 import '../message/message_widget.dart';
 import '../message_1/message1_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -20,6 +22,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server/gmail.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:geocoding_platform_interface/src/models/location.dart' as GeoLocation;
+import 'package:geolocator/geolocator.dart';
 
 
 
@@ -37,6 +41,9 @@ class Order1Widget extends StatefulWidget {
 class _Order1WidgetState extends State<Order1Widget> {
   late Order1Model _model;
   late DBHelper dbHelper; // DBHelper 實例
+
+  String _locationMessage = '';
+
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -99,7 +106,7 @@ class _Order1WidgetState extends State<Order1Widget> {
       });
     }
     else if (widget.B["orderStatus"]=='3'){
-      setState(() {
+      setState(()  {
       str = "外送員前往取餐";
       });
     }
@@ -157,11 +164,86 @@ class _Order1WidgetState extends State<Order1Widget> {
     }
   }
 
+  getOrder() async {
+    var url = Uri.parse(ip+"contract/getOrder");
+
+    final responce = await http.post(url,body: {
+
+      "contractAddress": widget.B['contract'],
+      "wallet": FFAppState().account,
+      "id": widget.B['id'],
+
+    });
+    if (responce.statusCode == 200) {
+      var data = json.decode(responce.body);//將json解碼為陣列形式
+      return data;
+    }
+  }
+
+  currentLocation(_location) async {
+    var url = Uri.parse(ip+"contract/currentLocation");
+
+    final responce = await http.post(url,body: {
+
+      "contractAddress": widget.B['contract'],
+      "deliveryWallet": FFAppState().account,
+      "deliveryPassword": FFAppState().password,
+      "id": widget.B['id'],
+      "deliveryLocation": _location,
+
+    });
+    if (responce.statusCode == 200) {
+      var data = json.decode(responce.body);//將json解碼為陣列形式
+      return data;
+    }
+  }
+
+
+  _getLocation() async {
+    try {
+      // 請求位置權限
+      LocationPermission permission = await Geolocator.requestPermission();
+
+      if (permission == LocationPermission.denied) {
+        // 使用者拒絕了位置權限
+        setState(() {
+          _locationMessage = '使用者拒絕了位置權限';
+        });
+      } else if (permission == LocationPermission.deniedForever) {
+        // 使用者永久拒絕了位置權限
+        setState(() {
+          _locationMessage = '使用者永久拒絕了位置權限';
+        });
+      } else {
+        // 使用者同意位置權限，繼續取得位置
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+
+        setState(() {
+          _locationMessage =
+          /*'緯度: ${position.latitude}, 經度: ${position.longitude}';*/
+          '${position.latitude}%2C${position.longitude}';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _locationMessage = '無法獲取位置: $e';
+      });
+    }
+
+    print("本地位置 $_locationMessage");
+    await currentLocation(_locationMessage);
+    print("寄送本地位置完成");
+  }
+
 
   List<Map<String, dynamic>> orderContentList = []; // 訂單內容
 
   Future<List> getData() async {
     await dbHelper.dbResetOrder_content();
+    orderContentList = List.from(orderContentList);//使list變成可更改的
+    orderContentList.clear();
     var orderContent = await getOrderContent();
     var storeaddress = await getStore();
     for (var i =0; i< orderContent.length;i++){
@@ -176,9 +258,75 @@ class _Order1WidgetState extends State<Order1Widget> {
       await dbHelper.dbInsertOrder_content(A); // 將訂單內容插入資料庫
     }
     print("訂單內容是: $orderContent");
-    orderContentList = await dbHelper.dbGetOrder_content(); // 更新訂單內
-    print(orderContentList);
-    return orderContentList;
+    //orderContentList = await dbHelper.dbGetOrder_content(); // 更新訂單內
+    //await dbHelper.dbGetOrder_content();
+    //print(orderContentList);
+    return await dbHelper.dbGetOrder_content();
+  }
+
+
+
+  List<Map<String, dynamic>> orderList = []; // 訂單內容
+  String _result = '';
+  String _result_1 = '';
+
+  _convertAddressToLatLng() async {
+    /*--------------------------------------------------------*/
+    orderList = List.from(orderList);//使list變成可更改的
+    orderList.clear();
+    await dbHelper.dbResetStores();// 重製訂單內容
+    Map<String, dynamic> A = {};//重要{}
+    var Order = await getOrder();
+    A['consumer']=Order["consumer"].toString();
+    A['consumer'] = A['consumer'].replaceAll(RegExp(r'^\[|\]$'), '');
+    await dbHelper.dbInsertStore(A); // 將訂單內容插入資料庫
+    orderList = await dbHelper.dbGetStores();
+    List<String> myList =orderList[0]['consumer'].split(',');
+    /*--------------------------------------------------------*/
+    var Store = await getStore();
+
+    try {
+      List<GeoLocation.Location> locations = await locationFromAddress(
+        myList[1],
+      );
+      if (locations.isNotEmpty) {
+        GeoLocation.Location first = locations.first;
+        setState(() {
+          //_result = '經度: ${first.latitude}, 緯度: ${first.longitude}';
+          _result= '${first.latitude}%2C${first.longitude}';
+        });
+      } else {
+        setState(() {
+          _result = '找不到該地址的經緯度信息';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _result = '發生錯誤: $e';
+      });
+    }
+    try {
+      List<GeoLocation.Location> locations = await locationFromAddress(
+        Store["storeAddress"],
+      );
+      if (locations.isNotEmpty) {
+        GeoLocation.Location first = locations.first;
+        setState(() {
+          //_result = '經度: ${first.latitude}, 緯度: ${first.longitude}';
+          _result_1= '${first.latitude}%2C${first.longitude}';
+        });
+      } else {
+        setState(() {
+          _result_1 = '找不到該地址的經緯度信息';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _result_1 = '發生錯誤: $e';
+      });
+    }
+    print(_result);
+    print(_result_1);
   }
 
 
@@ -195,6 +343,7 @@ class _Order1WidgetState extends State<Order1Widget> {
 
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -638,11 +787,10 @@ class _Order1WidgetState extends State<Order1Widget> {
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
-                          final Uri _url = Uri.parse('https://www.google.com/maps'); // 你可以在这里设置特定的位置或搜索
-                          if (await launchUrl(_url)) {
-                            await launchUrl(_url);
-                          } else {
-                            throw 'Could not launch $_url';
+                          await _convertAddressToLatLng();
+                          Uri mapURL = Uri.parse('https://www.google.com/maps/dir/?api=1&origin=$_result&destination=$_result_1');
+                          if (!await launchUrl(mapURL, mode: LaunchMode.externalApplication)) {
+                            throw Exception('Could not launch $mapURL');
                           }
                         },
                         child: Container(
@@ -703,8 +851,10 @@ class _Order1WidgetState extends State<Order1Widget> {
                               final message = Message()
                                 ..from = Address('C109154229@nkust.edu.tw', '彥傑')
                                 ..recipients.add('jeanyjyjyjyjyj@gmail.com')
-                                ..subject = '主题'
-                                ..text = '正文'
+                                ..subject = 'Blofood'
+                                ..text = '店家合約:'+widget.B['contract']+'\n'+
+                                         '訂單編號:'+widget.B['id']+'\n'+
+                                         '取餐照片'
                                 ..attachments.add(FileAttachment(File(image.path)));
 
                               try {
@@ -765,8 +915,10 @@ class _Order1WidgetState extends State<Order1Widget> {
                               final message = Message()
                                 ..from = Address('C109154229@nkust.edu.tw', '彥傑')
                                 ..recipients.add('jeanyjyjyjyjyj@gmail.com')
-                                ..subject = '主题'
-                                ..text = '正文'
+                                ..subject = 'Blofood'
+                                ..text = '店家合約:'+widget.B['contract']+'\n'+
+                                    '訂單編號:'+widget.B['id']+'\n'+
+                                    '送達照片'
                                 ..attachments.add(FileAttachment(File(image.path)));
 
                               try {

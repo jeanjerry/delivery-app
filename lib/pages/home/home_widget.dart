@@ -133,6 +133,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     Future<List> getlist() async {
       List contracts = await getContract();
       await dbHelper.dbResetOrder();
+      orderContentList = List.from(orderContentList);
       orderContentList.clear();
       for (int i = 0; i < contracts.length; i++) {
         var result = await checkAvailableOrder(contracts[i]);
@@ -145,7 +146,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                 name['storeImageLink'].toString(),
                 "/data/data/com.mycompany.deliveryapp/image",
                 contracts[i]);
-            print("ok");
+            print("店家照片ok");
           }
           else{
             print("no");
@@ -467,7 +468,7 @@ class Items extends StatelessWidget {
                           fontSize: 19.0,
                         ),
                       ),
-                      AutoSizeText(
+                      /*AutoSizeText(
                         '店家距離: 變數',
                         style: FlutterFlowTheme.of(context)
                             .bodyMedium
@@ -475,7 +476,7 @@ class Items extends StatelessWidget {
                           fontFamily: 'Readex Pro',
                           fontSize: 19.0,
                         ),
-                      ),
+                      ),*/
                     ],
                   ),
                   Column(
@@ -492,7 +493,7 @@ class Items extends StatelessWidget {
                           fontSize: 19.0,
                         ),
                       ),
-                      AutoSizeText(
+                      /*AutoSizeText(
                         '消費者距離: 變數',
                         style: FlutterFlowTheme.of(context)
                             .bodyMedium
@@ -500,7 +501,7 @@ class Items extends StatelessWidget {
                           fontFamily: 'Readex Pro',
                           fontSize: 19.0,
                         ),
-                      ),
+                      ),*/
                     ],
                   ),
                 ],

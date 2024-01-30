@@ -560,7 +560,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                             );
                                                           }
                                                           else{
-                                                            createAccount();
+                                                            await createAccount();
                                                             await showDialog(
                                                               context: context,
                                                               builder: (alertDialogContext) {

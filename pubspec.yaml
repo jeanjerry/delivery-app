@@ -61,6 +61,9 @@ dependencies:
   dropdown_button2: ^2.3.9
   image_picker: ^1.0.6
   mailer: ^6.0.1
+  geocoding: ^2.1.1
+  geolocator: ^10.1.0
+  flutter_background_service: ^5.0.5
 
 
 

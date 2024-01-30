@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
@@ -62,12 +63,12 @@ class _OrderWidgetState extends State<OrderWidget> {
     }
   }
 
-
   List<Map<String, dynamic>> checkorderList = []; // 確定接單的訂單單號與店家合約
   List<Map<String, dynamic>> orderList = []; // 訂單內容
 
   Future<List> getorderList() async {//從資料庫得到有幾筆已接訂單
     orderList.clear();
+    orderList = List.from(orderList);//使list變成可更改的
     checkorderList = await dbHelper.dbGetcheckorder();
     print("已接訂單長度:"+checkorderList.length.toString());
     await dbHelper.dbResetStores();// 重製訂單內容
@@ -90,9 +91,9 @@ class _OrderWidgetState extends State<OrderWidget> {
       A['storeAddress']=storeaddress["storeAddress"];
       await dbHelper.dbInsertStore(A); // 將訂單內容插入資料庫
     }
-    orderList = await dbHelper.dbGetStores();
-    print(orderList);
-    return orderList;
+    //orderList = await dbHelper.dbGetStores();
+    //print(orderList);
+    return await dbHelper.dbGetStores();
 
     /*for(int i=0 ; i<checkorderList.length; i++){
       List<String> consumer = checkorderList[i]["consumer"].split(',');
@@ -115,7 +116,6 @@ class _OrderWidgetState extends State<OrderWidget> {
     //print(myList[0]);
 
   }
-
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -233,183 +233,6 @@ class _OrderWidgetState extends State<OrderWidget> {
                         },
                       ),
                     ),
-
-
-
-
-
-                      /*Container(
-                        width: MediaQuery.sizeOf(context).width * 1.0,
-                        height: MediaQuery.sizeOf(context).height * 0.32,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFA1DAA1),
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 4.0,
-                              color: Color(0x33000000),
-                              offset: Offset(2.0, 6.0),
-                            )
-                          ],
-                          borderRadius: BorderRadius.circular(14.0),
-                        ),
-                        child: InkWell(
-                          splashColor: Colors.transparent,
-                          focusColor: Colors.transparent,
-                          hoverColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () async {
-                            context.pushNamed('order-1');
-                          },
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    10.0, 0.0, 10.0, 0.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    AutoSizeText(
-                                      '單號',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontSize: 24.0,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          170.0, 0.0, 0.0, 0.0),
-                                      child: AutoSizeText(
-                                        '查看更多',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily: 'Readex Pro',
-                                              fontSize: 24.0,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                      ),
-                                    ),
-                                    Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: FlutterFlowTheme.of(context)
-                                          .primaryText,
-                                      size: 24.0,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    10.0, 10.0, 10.0, 0.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    AutoSizeText(
-                                      '外送費 :  30元',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontSize: 24.0,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    10.0, 10.0, 10.0, 0.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    AutoSizeText(
-                                      '地址 :  807高雄市三民區建工路415號',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontSize: 24.0,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                      minFontSize: 1.0,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    10.0, 10.0, 10.0, 0.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    AutoSizeText(
-                                      '距離店家:1.2km',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontSize: 24.0,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                      minFontSize: 1.0,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    10.0, 10.0, 10.0, 0.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    AutoSizeText(
-                                      '距離消費者:1.5km',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontSize: 24.0,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                      minFontSize: 1.0,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    10.0, 10.0, 10.0, 0.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    AutoSizeText(
-                                      '店家餐點準備中',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontSize: 24.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                      minFontSize: 1.0,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),*/
                     ],
                   ),
                 ),
@@ -478,12 +301,12 @@ class Items extends StatelessWidget {
         List<String> myList =list![i]['consumer'].split(',');
         String str = "";
         getorderStatus()  {
-          String str = "";
           if(list![i]["orderStatus"]=='2'){
             str = "店家準備中";
           }
           else if (list![i]["orderStatus"]=='3'){
             str = "外送員前往取餐";
+
           }
           else if (list![i]["orderStatus"]=='4'){
             str = "外送員前往送餐";
@@ -531,6 +354,7 @@ class Items extends StatelessWidget {
             onTap: () async {
               Map<String, dynamic> B = await list![i];
               //print("a$B");  //測試用
+
               await Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => Order1Widget(B: B, ),

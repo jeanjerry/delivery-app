@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:url_launcher/url_launcher.dart';
+
 import '../order/order_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -16,6 +18,8 @@ import 'package:http/http.dart' as http;
 import '/main.dart';
 import '/database/storeDB.dart'; // 引入自定義的 SQL 檔案
 import 'package:decimal/decimal.dart';
+import 'package:geocoding/geocoding.dart';
+
 
 class Home1Widget extends StatefulWidget {
 
@@ -31,7 +35,6 @@ class Home1Widget extends StatefulWidget {
 class _Home1WidgetState extends State<Home1Widget> {
   late Home1Model _model;
   late DBHelper dbHelper;// DBHelper 實例
-
 
   getOrderContent(contractAddress,availableOrderID) async {
     var url = Uri.parse(ip+"contract/getOrderContent");
@@ -87,6 +90,22 @@ class _Home1WidgetState extends State<Home1Widget> {
     }
   }
 
+  getStore() async {
+    var url = Uri.parse(ip+"contract/getStore");
+
+    final responce = await http.post(url,body: {
+
+      "contractAddress": widget.selectedItem['contract'],
+      "wallet": FFAppState().account,
+
+    });
+    if (responce.statusCode == 200) {
+      var data = json.decode(responce.body);//將json解碼為陣列形式
+      //print("店家名稱:${data["storeName"].toString()}");
+      return data;
+    }
+  }
+
   /*List<Map<String, dynamic>> orderList = []; // 訂單內容
 
   Future<List> getorderList() async {      //把getorder放入資料庫stores
@@ -132,6 +151,7 @@ class _Home1WidgetState extends State<Home1Widget> {
 
      Future<List> getData() async {
        await dbHelper.dbResetOrder_content();
+       orderContentList = List.from(orderContentList);
        orderContentList.clear();
        var orderContent = await getOrderContent(widget.selectedItem['contract'],widget.selectedItem['id']);
               for (var i =0; i< orderContent.length;i++){
@@ -149,6 +169,51 @@ class _Home1WidgetState extends State<Home1Widget> {
               //print(orderContentList);
               return orderContentList;
         }
+
+
+  List<Map<String, dynamic>> orderList = []; // 訂單內容
+  String _result = '';
+  String _result_1 = '';
+   _convertAddressToLatLng() async {
+     orderList = List.from(orderList);//使list變成可更改的
+    orderList.clear();
+    await dbHelper.dbResetStores();// 重製訂單內容
+    Map<String, dynamic> A = {};//重要{}
+    var Order = await getOrder();
+     var Store = await getStore();
+    A['consumer']=Order["consumer"].toString();
+    A['consumer'] = A['consumer'].replaceAll(RegExp(r'^\[|\]$'), '');
+    await dbHelper.dbInsertStore(A); // 將訂單內容插入資料庫
+    orderList = await dbHelper.dbGetStores();
+    List<String> myList =orderList[0]['consumer'].split(',');
+    print(myList[1]);
+    try {
+      List<Location> locations = await locationFromAddress(
+        myList[1],
+      );
+
+      if (locations.isNotEmpty) {
+        Location first = locations.first;
+        setState(() {
+          //_result = '經度: ${first.latitude}, 緯度: ${first.longitude}';
+          _result= '${first.latitude}%2C${first.longitude}';
+          _result_1= Store["latitudeAndLongitude"].toString();
+        });
+      } else {
+        setState(() {
+          _result = '找不到該地址的經緯度信息';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _result = '發生錯誤: $e';
+      });
+    }
+    print(_result);
+     print(_result_1);
+  }
+
+
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -173,7 +238,8 @@ class _Home1WidgetState extends State<Home1Widget> {
   @override
   Widget build(BuildContext context) {
     //print(orderContentList[0]["orderID"]);
-    //print(orderContentList);
+    //_convertAddressToLatLng();
+    //print("經緯度"+_result);
 
     if (isiOS) {
       SystemChrome.setSystemUIOverlayStyle(
@@ -459,50 +525,59 @@ class _Home1WidgetState extends State<Home1Widget> {
                           ),
                         ),
                       ),
-                      Container(
-                        width: MediaQuery.sizeOf(context).width * 1.0,
-                        height: MediaQuery.sizeOf(context).height * 0.2,
-                        constraints: BoxConstraints(
-                          maxWidth: 430.0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 4.0,
-                              color: Color(0x33000000),
-                              offset: Offset(0.0, 6.0),
-                            )
-                          ],
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
-                              16.0, 16.0, 16.0, 24.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 24.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Align(
-                                      alignment:
-                                          AlignmentDirectional(0.00, 0.00),
-                                      child: Text(
-                                        '路程',
-                                        style: FlutterFlowTheme.of(context)
-                                            .titleLarge,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                      InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () async {
+                          await _convertAddressToLatLng();
+                          Uri mapURL = Uri.parse('https://www.google.com/maps/dir/?api=1&origin=$_result&destination=$_result_1');
+                          if (!await launchUrl(mapURL, mode: LaunchMode.externalApplication)) {
+                            throw Exception('Could not launch $mapURL');
+                          }
+                        },
+                        child: Container(
+                          width: MediaQuery.sizeOf(context).width,
+                          height: MediaQuery.sizeOf(context).height * 0.18,
+                          constraints: BoxConstraints(
+                            maxWidth: 430,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                blurRadius: 4,
+                                color: Color(0x33000000),
+                                offset: Offset(0, 6),
+                              )
                             ],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 24),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 24),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Align(
+                                        alignment: AlignmentDirectional(0, 0),
+                                        child: Text(
+                                          '路程',
+                                          style: FlutterFlowTheme.of(context).titleLarge,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
