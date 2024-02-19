@@ -399,11 +399,10 @@ class _LoginWidgetState extends State<LoginWidget>
                                                       child: TextFormField(
                                                         controller: _model.passwordController1,
                                                         focusNode: _model.passwordFocusNode1,
-                                                        onFieldSubmitted:
+                                                        onChanged:
                                                             (_) async {
                                                           setState(() {
-                                                            FFAppState().password =
-                                                                _model.passwordController1.text;
+                                                            FFAppState().password = _model.passwordController1.text;
                                                           });
                                                         },
                                                         autofocus: true,
@@ -693,7 +692,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                             .emailAddressController,
                                                         focusNode: _model
                                                             .emailAddressFocusNode,
-                                                        onFieldSubmitted:
+                                                        onChanged:
                                                             (_) async {
                                                           setState(() {
                                                             FFAppState().account = _model.emailAddressController.text;
@@ -808,14 +807,10 @@ class _LoginWidgetState extends State<LoginWidget>
                                                             .passwordController2,
                                                         focusNode: _model
                                                             .passwordFocusNode2,
-                                                        onFieldSubmitted:
+                                                        onChanged:
                                                             (_) async {
                                                           setState(() {
-                                                            FFAppState()
-                                                                    .password =
-                                                                _model
-                                                                    .passwordController2
-                                                                    .text;
+                                                            FFAppState().password = _model.passwordController2.text;
                                                           });
                                                         },
                                                         autofocus: true,

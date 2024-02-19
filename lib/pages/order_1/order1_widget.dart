@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:geocoding/geocoding.dart';
 
+import '../../google_api.dart';
 import '../message/message_widget.dart';
 import '../message_1/message1_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -96,6 +97,24 @@ class _Order1WidgetState extends State<Order1Widget> {
       var data = json.decode(responce.body);//將json解碼為陣列形式
       return data;
     }
+  }
+
+  Dialog() async {
+    await showDialog(
+      context: context,
+      builder: (alertDialogContext) {
+        return AlertDialog(
+          title: Text('照片成功寄出'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(alertDialogContext),
+              child: Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
+    setState(() {});
   }
 
   getorderStatus()  {
@@ -239,13 +258,14 @@ class _Order1WidgetState extends State<Order1Widget> {
 
 
   List<Map<String, dynamic>> orderContentList = []; // 訂單內容
-
+  String storeemail = "" ;
   Future<List> getData() async {
     await dbHelper.dbResetOrder_content();
     orderContentList = List.from(orderContentList);//使list變成可更改的
     orderContentList.clear();
     var orderContent = await getOrderContent();
     var storeaddress = await getStore();
+      storeemail = storeaddress["storeEmail"];
     for (var i =0; i< orderContent.length;i++){
       Map<String, dynamic> A = {};//重要{}
       A['orderID']=orderContent[i][0];
@@ -267,8 +287,8 @@ class _Order1WidgetState extends State<Order1Widget> {
 
 
   List<Map<String, dynamic>> orderList = []; // 訂單內容
-  String _result = '';
-  String _result_1 = '';
+  String _result = ''; //客人
+  String _result_1 = ''; //店家
 
   _convertAddressToLatLng() async {
     /*--------------------------------------------------------*/
@@ -788,7 +808,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                         highlightColor: Colors.transparent,
                         onTap: () async {
                           await _convertAddressToLatLng();
-                          Uri mapURL = Uri.parse('https://www.google.com/maps/dir/?api=1&origin=$_result&destination=$_result_1');
+                          Uri mapURL = Uri.parse('https://www.google.com/maps/dir/?api=1&origin=$_result_1&destination=$_result');
                           if (!await launchUrl(mapURL, mode: LaunchMode.externalApplication)) {
                             throw Exception('Could not launch $mapURL');
                           }
@@ -841,7 +861,10 @@ class _Order1WidgetState extends State<Order1Widget> {
                         padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                         child: FFButtonWidget(
                           onPressed: () async {
-                            // 打开相機
+                            await GoogleHelper.takePhotoAndSendEmail(storeemail,myList[4],widget.B['contract'],widget.B['id'],"取餐照片");
+                            await confirmPickUp();
+                            await Dialog();
+                            /*// 打开相機
                             final image = await ImagePicker().pickImage(source: ImageSource.camera);
 
                             if (image != null) {
@@ -868,6 +891,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                             } else {
                               print('用户取消了拍照');
                             }
+                            */
                           },
                           text: '拍照進行收餐確認',
                           options: FFButtonOptions(
@@ -905,6 +929,10 @@ class _Order1WidgetState extends State<Order1Widget> {
                             EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                         child: FFButtonWidget(
                           onPressed: () async {
+                            await GoogleHelper.takePhotoAndSendEmail(storeemail,myList[4],widget.B['contract'],widget.B['id'],"送達照片");
+                            await confirmDelivery();
+                            await Dialog();
+                            /*
                             // 打开相機
                             final image = await ImagePicker().pickImage(source: ImageSource.camera);
 
@@ -931,7 +959,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                               }
                             } else {
                               print('用户取消了拍照');
-                            }
+                            }*/
                           },
                           text: '拍照進行送達確認',
                           options: FFButtonOptions(

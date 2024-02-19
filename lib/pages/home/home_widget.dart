@@ -142,7 +142,7 @@ class _HomeWidgetState extends State<HomeWidget> {
           var name = await getStore(contracts[i]);
           print(name['storeImageLink']);
           if (name['storeImageLink']!= " ") {
-            await GoogleDriveHelper.downloadImage(
+            await GoogleHelper.downloadImage(
                 name['storeImageLink'].toString(),
                 "/data/data/com.mycompany.deliveryapp/image",
                 contracts[i]);

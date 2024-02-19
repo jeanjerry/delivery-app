@@ -108,12 +108,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                 child: TextFormField(
                   controller: _model.yourNameController,
                   focusNode: _model.yourNameFocusNode,
-                  onChanged: (_) => EasyDebounce.debounce(
-                    '_model.yourNameController',
-                    Duration(milliseconds: 2000),
-                    () => setState(() {}),
-                  ),
-                  onFieldSubmitted: (_) async {
+                  onChanged: (_) async {
                     setState(() {
                       FFAppState().Name = _model.yourNameController.text;
                     });
@@ -164,6 +159,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                         ? InkWell(
                             onTap: () async {
                               _model.yourNameController?.clear();
+                              FFAppState().Name = _model.yourNameController.text;
                               setState(() {});
                             },
                             child: Icon(
@@ -201,12 +197,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                 child: TextFormField(
                   controller: _model.phoneController,
                   focusNode: _model.phoneFocusNode,
-                  onChanged: (_) => EasyDebounce.debounce(
-                    '_model.phoneController',
-                    Duration(milliseconds: 2000),
-                    () => setState(() {}),
-                  ),
-                  onFieldSubmitted: (_) async {
+                  onChanged: (_) async {
                     setState(() {
                       FFAppState().Telephone = _model.phoneController.text;
                     });
@@ -257,6 +248,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                         ? InkWell(
                             onTap: () async {
                               _model.phoneController?.clear();
+                              FFAppState().Telephone = _model.phoneController.text;
                               setState(() {});
                             },
                             child: Icon(
@@ -294,12 +286,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                 child: TextFormField(
                   controller: _model.emailController,
                   focusNode: _model.emailFocusNode,
-                  onChanged: (_) => EasyDebounce.debounce(
-                    '_model.emailController',
-                    Duration(milliseconds: 2000),
-                    () => setState(() {}),
-                  ),
-                  onFieldSubmitted: (_) async {
+                  onChanged: (_) async {
                     setState(() {
                       FFAppState().email = _model.emailController.text;
                     });
@@ -350,6 +337,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                         ? InkWell(
                             onTap: () async {
                               _model.emailController?.clear();
+                              FFAppState().email = _model.emailController.text;
                               setState(() {});
                             },
                             child: Icon(

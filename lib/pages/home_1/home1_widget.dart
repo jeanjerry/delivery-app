@@ -532,7 +532,7 @@ class _Home1WidgetState extends State<Home1Widget> {
                         highlightColor: Colors.transparent,
                         onTap: () async {
                           await _convertAddressToLatLng();
-                          Uri mapURL = Uri.parse('https://www.google.com/maps/dir/?api=1&origin=$_result&destination=$_result_1');
+                          Uri mapURL = Uri.parse('https://www.google.com/maps/dir/?api=1&origin=$_result_1&destination=$_result');
                           if (!await launchUrl(mapURL, mode: LaunchMode.externalApplication)) {
                             throw Exception('Could not launch $mapURL');
                           }
@@ -595,9 +595,28 @@ class _Home1WidgetState extends State<Home1Widget> {
                                 builder: (context) => OrderWidget( A: A, ),
                               ),
                             );*/
-                            await deliveryAcceptOrder();
-                            await checkorder();
-                            context.pushNamed('order');
+                            if(FFAppState().Name != "" && FFAppState().Telephone != "" && FFAppState().email != ""){
+                              await deliveryAcceptOrder();
+                              await checkorder();
+                              context.pushNamed('order');
+                            }
+                            else{
+                              await showDialog(
+                                context: context,
+                                builder: (alertDialogContext) {
+                                  return AlertDialog(
+                                    title: Text('請設定姓名、電話、信箱'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(alertDialogContext),
+                                        child: Text('Ok'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
                           },
                           text: '接單',
                           options: FFButtonOptions(
