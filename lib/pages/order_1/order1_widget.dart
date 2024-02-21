@@ -217,6 +217,23 @@ class _Order1WidgetState extends State<Order1Widget> {
     }
   }
 
+  Dialog1() async {
+    await showDialog(
+      context: context,
+      builder: (alertDialogContext) {
+        return AlertDialog(
+          title: Text('請與顧客一起入鏡'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(alertDialogContext),
+              child: Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   _getLocation() async {
     try {
@@ -929,6 +946,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                             EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                         child: FFButtonWidget(
                           onPressed: () async {
+                            await Dialog1();
                             await GoogleHelper.takePhotoAndSendEmail(storeemail,myList[4],widget.B['contract'],widget.B['id'],"送達照片");
                             await confirmDelivery();
                             await Dialog();
