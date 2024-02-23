@@ -282,7 +282,9 @@ class _Order1WidgetState extends State<Order1Widget> {
     orderContentList.clear();
     var orderContent = await getOrderContent();
     var storeaddress = await getStore();
+    setState(() {
       storeemail = storeaddress["storeEmail"];
+    });
     for (var i =0; i< orderContent.length;i++){
       Map<String, dynamic> A = {};//重要{}
       A['orderID']=orderContent[i][0];
@@ -878,6 +880,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                         padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                         child: FFButtonWidget(
                           onPressed: () async {
+                            print(storeemail);
                             await GoogleHelper.takePhotoAndSendEmail(storeemail,myList[4],widget.B['contract'],widget.B['id'],"取餐照片");
                             await confirmPickUp();
                             await Dialog();

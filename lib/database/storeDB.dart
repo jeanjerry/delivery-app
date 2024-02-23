@@ -67,7 +67,8 @@ class DBHelper {
           CREATE TABLE IF NOT EXISTS wallets (
             orderStatus TEXT,
             storeName TEXT,
-            fee TEXT
+            fee TEXT,
+            id TEXT
           )
         ''');
       },
