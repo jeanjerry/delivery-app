@@ -68,10 +68,10 @@ class _MessageWidgetState extends State<MessageWidget> {
   sendMessage() async {
     var url = Uri.parse(ip + "contract/sendMessage");
     var people ;
-    if(FFAppState().people=="消費者"){
+    if(FFAppState().people=="consumer"){
       people = "2";
     }
-    else if (FFAppState().people=="店家"){
+    else if (FFAppState().people=="store"){
       people = "1";
     }
     final response = await http.post(url, body: {
@@ -208,7 +208,7 @@ class _MessageWidgetState extends State<MessageWidget> {
                               FormFieldController<String>(
                                 _model.dropDownValue ??= FFAppState().people,
                               ),
-                          options: ['消費者', '店家'],
+                          options: ['consumer', 'store'],
                           onChanged: (val) async {
                             setState(() => _model.dropDownValue = val);
                             setState(() {
@@ -221,7 +221,7 @@ class _MessageWidgetState extends State<MessageWidget> {
                             fontFamily: 'Readex Pro',
                             fontSize: 20,
                           ),
-                          hintText: '請選擇對話對象',
+                          hintText: 'Please select someone to talk to',
                           icon: Icon(
                             Icons.keyboard_arrow_down_rounded,
                             color: FlutterFlowTheme.of(context).secondaryText,
@@ -260,7 +260,7 @@ class _MessageWidgetState extends State<MessageWidget> {
                             textCapitalization: TextCapitalization.words,
                             obscureText: false,
                             decoration: InputDecoration(
-                              labelText: '請輸入訊息',
+                              labelText: 'Please enter message',
                               labelStyle: FlutterFlowTheme.of(context)
                                   .labelMedium
                                   .override(
@@ -350,21 +350,21 @@ class Items extends StatelessWidget {
         who() {
           String str = "";
           if (list![i][0] == '2' && list![i][1] == '3') {
-            str = "消費者對外送員 :";
+            str = "Consumers to delivery people :";
           } else if (list![i][0] == '3' && list![i][1] == '2') {
-            str = "外送員對消費者 :";
+            str = "Delivery workers to consumers :";
           }
           else if (list![i][0] == '1' && list![i][1] == '2') {
-            str = "店家對消費者 :";
+            str = "store to consumer :";
           }
           else if (list![i][0] == '2' && list![i][1] == '1') {
-            str = "消費者對店家 :";
+            str = "Consumer to store :";
           }
           else if (list![i][0] == '3' && list![i][1] == '1') {
-            str = "外送員對店家 :";
+            str = "Delivery boy versus store owner :";
           }
           else if (list![i][0] == '1' && list![i][1] == '3') {
-            str = "店家對外送員 :";
+            str = "Store delivery person :";
           }
           return str;
         }

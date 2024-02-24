@@ -28,7 +28,8 @@ class DBHelper {
             delivery TEXT,
             orderStatus TEXT,
             contract TEXT,
-            storeAddress TEXT
+            storeAddress TEXT,
+            time TEXT
           )
         ''');
         // 建立Order_content表格
@@ -51,7 +52,8 @@ class DBHelper {
             fee TEXT,
             contract TEXT,
             foodCost TEXT,
-            note TEXT
+            note TEXT,
+            time TEXT
           )
         ''');
         // 建立checkorders表格

@@ -277,7 +277,7 @@ class _WalletWidgetState extends State<WalletWidget>
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       0.0, 2.0, 0.0, 0.0),
                                   child: Text(
-                                    '餘額',
+                                    'balance',
                                     style: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
@@ -310,7 +310,7 @@ class _WalletWidgetState extends State<WalletWidget>
                       padding:
                           EdgeInsetsDirectional.fromSTEB(16.0, 10.0, 16.0, 8.0),
                       child: Text(
-                        '交易明細',
+                        'Transaction details',
                         style: FlutterFlowTheme.of(context).labelLarge.override(
                               fontFamily: 'Readex Pro',
                               fontSize: 25.0,
@@ -452,7 +452,7 @@ class Items extends StatelessWidget {
                       CrossAxisAlignment.start,
                       children: [
                         AutoSizeText(
-                          list![i]["storeName"]+"單號:"+list![i]["id"],
+                          list![i]["storeName"]+"number:"+list![i]["id"],
                           style: FlutterFlowTheme.of(context)
                               .bodyLarge
                               .override(

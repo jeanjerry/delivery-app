@@ -128,6 +128,23 @@ class _HomeWidgetState extends State<HomeWidget> {
       }
     }
 
+    getTime(contractAddress,availableOrderID) async {
+      var url = Uri.parse(ip+"contract/getTime");
+
+      final responce = await http.post(url,body: {
+
+        "contractAddress": contractAddress,
+        "wallet": FFAppState().account,
+        "id": availableOrderID.toString(),
+
+      });
+      if (responce.statusCode == 200) {
+        var data = json.decode(responce.body);//將json解碼為陣列形式
+        return data;
+      }
+    }
+
+
     List<Map<String, dynamic>> orderContentList = []; // 訂單內容
 
     Future<List> getlist() async {
@@ -155,6 +172,7 @@ class _HomeWidgetState extends State<HomeWidget> {
             print("${contracts[i]} 店家的可接單號 ID 為: $availableOrderID");
             for(int j = 0; j < availableOrderID.length; j++){
               var ORDER = await getOrder(contracts[i],availableOrderID[j]);
+              var Time = await getTime(contracts[i],availableOrderID[j]);
                 Map<String, dynamic> A = {};//重要{}
                 A['id']=availableOrderID[j];
                 A['storeName']=name["storeName"];
@@ -162,6 +180,10 @@ class _HomeWidgetState extends State<HomeWidget> {
                 A['contract']=contracts[i];
                 A['foodCost']=ORDER["foodCost"];
                 A['note']=ORDER["note"];
+                A['time']=Time["result"].toString();
+                A['time'] = A['time'].replaceAll(RegExp(r'^\[|\]$'), '');
+                A['time'] = A['time'].split(',');
+                A['time'] = A['time'][2];
                 await dbHelper.dbInsertOrder(A); // 將訂單內容插入資料庫
             }
           }
@@ -286,7 +308,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 10.0),
                         child: Text(
-                          '可接送的外送單',
+                          'Delivery orders available',
                           style:
                               FlutterFlowTheme.of(context).labelMedium.override(
                                     fontFamily: 'Readex Pro',
@@ -451,61 +473,50 @@ class Items extends StatelessWidget {
               ),
               Row(
                 mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment:
-                MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Column(
                     mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      AutoSizeText(
-                        list![i]["storeName"],
-                        style: FlutterFlowTheme.of(context)
-                            .bodyMedium
-                            .override(
-                          fontFamily: 'Readex Pro',
-                          fontSize: 19.0,
-                        ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          AutoSizeText(
+                            list![i]["storeName"],
+                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              fontFamily: 'Readex Pro',
+                              fontSize: 19,
+                            ),
+                          ),
+                          AutoSizeText(
+                            list![i]["fee"],
+                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              fontFamily: 'Readex Pro',
+                              fontSize: 19,
+                            ),
+                          ),
+                        ],
                       ),
-                      /*AutoSizeText(
-                        '店家距離: 變數',
-                        style: FlutterFlowTheme.of(context)
-                            .bodyMedium
-                            .override(
-                          fontFamily: 'Readex Pro',
-                          fontSize: 19.0,
-                        ),
-                      ),*/
-                    ],
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment:
-                    CrossAxisAlignment.start,
-                    children: [
-                      AutoSizeText(
-                        '外送費: '+list![i]["fee"],
-                        style: FlutterFlowTheme.of(context)
-                            .bodyMedium
-                            .override(
-                          fontFamily: 'Readex Pro',
-                          fontSize: 19.0,
-                        ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AutoSizeText(
+                            "Preparation time limit: "+list![i]["time"],
+                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              fontFamily: 'Readex Pro',
+                              fontSize: 19,
+                            ),
+                          ),
+                        ],
                       ),
-                      /*AutoSizeText(
-                        '消費者距離: 變數',
-                        style: FlutterFlowTheme.of(context)
-                            .bodyMedium
-                            .override(
-                          fontFamily: 'Readex Pro',
-                          fontSize: 19.0,
-                        ),
-                      ),*/
                     ],
                   ),
                 ],
-              ),
+              )
+
             ],
           ),
         );

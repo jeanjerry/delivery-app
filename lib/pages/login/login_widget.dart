@@ -65,7 +65,7 @@ class _LoginWidgetState extends State<LoginWidget>
           context: context,
           builder: (alertDialogContext) {
             return AlertDialog(
-              title: Text('登入失敗'),
+              title: Text('Login failed'),
               actions: [
                 TextButton(
                   onPressed: () =>
@@ -82,7 +82,7 @@ class _LoginWidgetState extends State<LoginWidget>
           context: context,
           builder: (alertDialogContext) {
             return AlertDialog(
-              title: Text('登入成功'),
+              title: Text('sign in suceesfully'),
               actions: [
                 TextButton(
                   onPressed: () =>
@@ -315,10 +315,10 @@ class _LoginWidgetState extends State<LoginWidget>
                                       indicatorWeight: 3.0,
                                       tabs: [
                                         Tab(
-                                          text: '創建帳號',
+                                          text: 'create account',
                                         ),
                                         Tab(
-                                          text: '登入',
+                                          text: 'login',
                                         ),
                                       ],
                                       controller: _model.tabBarController,
@@ -356,7 +356,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                       ),
                                                     ),
                                                   Text(
-                                                    '請輸入密碼',
+                                                    'enter password',
                                                     textAlign: TextAlign.start,
                                                     style: FlutterFlowTheme.of(
                                                             context)
@@ -372,7 +372,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                             .fromSTEB(0.0, 4.0,
                                                                 0.0, 24.0),
                                                     child: Text(
-                                                      '將會自動幫您申請帳號',
+                                                      'will automatically help you apply for an account',
                                                       textAlign:
                                                           TextAlign.start,
                                                       style:
@@ -413,7 +413,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                             .passwordVisibility1,
                                                         decoration:
                                                             InputDecoration(
-                                                          labelText: '密碼',
+                                                          labelText: 'password',
                                                           labelStyle:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -546,7 +546,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                               context: context,
                                                               builder: (alertDialogContext) {
                                                                 return AlertDialog(
-                                                                  title: Text('密碼不能為空'),
+                                                                  title: Text('password can not be null'),
                                                                   actions: [
                                                                     TextButton(
                                                                       onPressed: () =>
@@ -564,7 +564,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                               context: context,
                                                               builder: (alertDialogContext) {
                                                                 return AlertDialog(
-                                                                  title: Text("創建完成"),
+                                                                  title: Text("completed"),
                                                                   actions: [
                                                                     TextButton(
                                                                       onPressed: () =>
@@ -577,7 +577,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                             );
                                                           }
                                                         },
-                                                        text: '創建',
+                                                        text: 'create',
                                                         options:
                                                             FFButtonOptions(
                                                           width:
@@ -667,7 +667,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                       ),
                                                     ),
                                                   Text(
-                                                    '請輸入帳號密碼',
+                                                    'Please enter account password',
                                                     textAlign: TextAlign.start,
                                                     style: FlutterFlowTheme.of(
                                                             context)
@@ -705,7 +705,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                         obscureText: false,
                                                         decoration:
                                                             InputDecoration(
-                                                          labelText: '帳號',
+                                                          labelText: 'account ',
                                                           labelStyle:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -821,7 +821,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                             .passwordVisibility2,
                                                         decoration:
                                                             InputDecoration(
-                                                          labelText: '密碼',
+                                                          labelText: 'password',
                                                           labelStyle:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -944,7 +944,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                         onPressed: () async {
                                                           checkUser();
                                                         },
-                                                        text: '登入',
+                                                        text: 'login',
                                                         options:
                                                             FFButtonOptions(
                                                           width:

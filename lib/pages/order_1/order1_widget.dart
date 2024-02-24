@@ -104,7 +104,7 @@ class _Order1WidgetState extends State<Order1Widget> {
       context: context,
       builder: (alertDialogContext) {
         return AlertDialog(
-          title: Text('照片成功寄出'),
+          title: Text('Photos sent successfully'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(alertDialogContext),
@@ -121,47 +121,47 @@ class _Order1WidgetState extends State<Order1Widget> {
     String str = "";
     if(widget.B["orderStatus"]=='2'){
       setState(() {
-      str = "店家準備中";
+      str = "The store is preparing";
       });
     }
     else if (widget.B["orderStatus"]=='3'){
       setState(()  {
-      str = "外送員前往取餐";
+      str = "Delivery boy goes to pick up food";
       });
     }
     else if (widget.B["orderStatus"]=='4'){
       setState(() {
-      str = "外送員前往送餐";
+      str = "Delivery boy goes to deliver food";
       });
     }
     else if (widget.B["orderStatus"]=='5'){
         setState(() {
-        str = "等待消費者確認餐點";
+        str = "Waiting for the customer to confirm the meal";
         });
     }
     else if (widget.B["orderStatus"]=='6'){
           setState(() {
-          str = "已送達";
+          str = "arrived";
           });
     }
     else if (widget.B["orderStatus"]=='7'){
       setState(() {
-      str = "店家拒絕接單";
+      str = "The store refused to accept the order";
       });
     }
     else if (widget.B["orderStatus"]=='10'){
       setState(() {
-      str = "店家未完成訂單";
+      str = "The store did not complete the order";
       });
     }
     else if (widget.B["orderStatus"]=='11'){
       setState(() {
-      str = "外送員未完成訂單";
+      str = "The delivery boy did not complete the order";
       });
     }
     else if (widget.B["orderStatus"]=='12'){
       setState(() {
-      str = "取消訂單";
+      str = "cancel order";
       });
     }
     return str;
@@ -222,7 +222,7 @@ class _Order1WidgetState extends State<Order1Widget> {
       context: context,
       builder: (alertDialogContext) {
         return AlertDialog(
-          title: Text('請與顧客一起入鏡'),
+          title: Text('Please take the photo with your customers'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(alertDialogContext),
@@ -460,7 +460,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                     clipBehavior: Clip.none,
                     children: [
                       Text(
-                        '訂單詳細資料',
+                        'Order details',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily: 'Readex Pro',
                               fontSize: 25.0,
@@ -493,7 +493,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '單號 : '+widget.B['id'],
+                                'Order number: '+widget.B['id'],
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
@@ -503,7 +503,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                                     ),
                               ),
                               Text(
-                                '餐點內容 :',
+                                'Meal content:',
                                 style: FlutterFlowTheme.of(context)
                                     .titleLarge
                                     .override(
@@ -561,7 +561,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             AutoSizeText(
-                                              '外送費 : ',
+                                              'Delivery fee: ',
                                               style:
                                                   FlutterFlowTheme.of(context)
                                                       .titleLarge
@@ -571,7 +571,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                                                       ),
                                             ),
                                             AutoSizeText(
-                                              widget.B['fee']+'元',
+                                              widget.B['fee']/*'元'*/,
                                               style:
                                                   FlutterFlowTheme.of(context)
                                                       .titleLarge
@@ -590,7 +590,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                                                 .secondaryBackground,
                                           ),
                                           child: AutoSizeText(
-                                            '店家地址 : '+ widget.B["storeAddress"],
+                                            'Store address: '+ widget.B["storeAddress"],
                                             style: FlutterFlowTheme.of(context)
                                                 .titleLarge
                                                 .override(
@@ -612,7 +612,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                                           .secondaryBackground,
                                     ),
                                     child: AutoSizeText(
-                                      '消費者地址 : '+myList[1],
+                                      'Consumer address: '+myList[1],
                                       style: FlutterFlowTheme.of(context)
                                           .titleLarge
                                           .override(
@@ -652,7 +652,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '備註',
+                                'Remark',
                                 style: FlutterFlowTheme.of(context).titleLarge,
                               ),
                               Padding(
@@ -669,6 +669,53 @@ class _Order1WidgetState extends State<Order1Widget> {
                                         widget.B["note"],
                                         style: FlutterFlowTheme.of(context)
                                             .titleLarge,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: MediaQuery.sizeOf(context).width,
+                        height: MediaQuery.sizeOf(context).height * 0.15,
+                        constraints: BoxConstraints(
+                          maxWidth: 430,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFF6B2B2),
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 4,
+                              color: Color(0x33000000),
+                              offset: Offset(0, 5),
+                            )
+                          ],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 24),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Delivery time limit',
+                                style: FlutterFlowTheme.of(context).titleLarge,
+                              ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 24),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Align(
+                                      alignment: AlignmentDirectional(0, 0),
+                                      child: Text(
+                                          widget.B['time'],
+                                        style: FlutterFlowTheme.of(context).titleLarge,
                                       ),
                                     ),
                                   ],
@@ -703,7 +750,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '當前狀態',
+                                'Current status',
                                 style: FlutterFlowTheme.of(context).titleLarge,
                               ),
                               Padding(
@@ -744,7 +791,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                             );
                             //context.pushNamed('message');
                           },
-                          text: '聊天室',
+                          text: 'chatroom',
                           options: FFButtonOptions(
                             width: MediaQuery.sizeOf(context).width * 1.0,
                             height: MediaQuery.sizeOf(context).height * 0.06,
@@ -864,7 +911,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                                       Align(
                                         alignment: AlignmentDirectional(0, 0),
                                         child: Text(
-                                          '路程',
+                                          'distance',
                                           style: FlutterFlowTheme.of(context).titleLarge,
                                         ),
                                       ),
@@ -913,7 +960,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                             }
                             */
                           },
-                          text: '拍照進行收餐確認',
+                          text: 'Take photos to confirm receipt of food',
                           options: FFButtonOptions(
                             width: MediaQuery.sizeOf(context).width * 1.0,
                             height: MediaQuery.sizeOf(context).height * 0.06,
@@ -982,7 +1029,7 @@ class _Order1WidgetState extends State<Order1Widget> {
                               print('用户取消了拍照');
                             }*/
                           },
-                          text: '拍照進行送達確認',
+                          text: 'Take photos for delivery confirmation',
                           options: FFButtonOptions(
                             width: MediaQuery.sizeOf(context).width * 1.0,
                             height: MediaQuery.sizeOf(context).height * 0.06,

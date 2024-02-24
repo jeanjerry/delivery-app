@@ -311,7 +311,7 @@ class _Home1WidgetState extends State<Home1Widget> {
                     clipBehavior: Clip.none,
                     children: [
                       Text(
-                        '單號 : '+widget.selectedItem["id"],
+                        'Order number : '+widget.selectedItem["id"],
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily: 'Readex Pro',
                               fontSize: 25.0,
@@ -344,7 +344,7 @@ class _Home1WidgetState extends State<Home1Widget> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '餐點內容 :',
+                                'content :',
                                 style: FlutterFlowTheme.of(context)
                                     .titleLarge
                                     .override(
@@ -409,7 +409,7 @@ class _Home1WidgetState extends State<Home1Widget> {
                                             mainAxisAlignment: MainAxisAlignment.end,
                                             children: [
                                               Text(
-                                                "總金額 : "+(Decimal.parse(widget.selectedItem["foodCost"]) / Decimal.parse('1e18'))
+                                                "lump sum : "+(Decimal.parse(widget.selectedItem["foodCost"]) / Decimal.parse('1e18'))
                                                     .toDouble()
                                                     .toString()+" Eth",
                                                 style: FlutterFlowTheme.of(context).titleLarge.override(
@@ -440,7 +440,7 @@ class _Home1WidgetState extends State<Home1Widget> {
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
                                                       Text(
-                                                        '外送費用 : ',
+                                                        'Delivery fee : ',
                                                         style:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -499,7 +499,7 @@ class _Home1WidgetState extends State<Home1Widget> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '備註文字',
+                                'Remarks text',
                                 style: FlutterFlowTheme.of(context).titleLarge,
                               ),
                               Padding(
@@ -516,6 +516,54 @@ class _Home1WidgetState extends State<Home1Widget> {
                                         widget.selectedItem['note'],
                                         style: FlutterFlowTheme.of(context)
                                             .titleLarge,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Generated code for this orderSummar Widget...
+                      Container(
+                        width: MediaQuery.sizeOf(context).width,
+                        height: MediaQuery.sizeOf(context).height * 0.15,
+                        constraints: BoxConstraints(
+                          maxWidth: 430,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFF6B2B2),
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 4,
+                              color: Color(0x33000000),
+                              offset: Offset(0, 5),
+                            )
+                          ],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 24),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Delivery time limit',
+                                style: FlutterFlowTheme.of(context).titleLarge,
+                              ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 24),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Align(
+                                      alignment: AlignmentDirectional(0, 0),
+                                      child: Text(
+                                        widget.selectedItem['time'],
+                                        style: FlutterFlowTheme.of(context).titleLarge,
                                       ),
                                     ),
                                   ],
@@ -569,7 +617,7 @@ class _Home1WidgetState extends State<Home1Widget> {
                                       Align(
                                         alignment: AlignmentDirectional(0, 0),
                                         child: Text(
-                                          '路程',
+                                          'distance',
                                           style: FlutterFlowTheme.of(context).titleLarge,
                                         ),
                                       ),
@@ -586,26 +634,22 @@ class _Home1WidgetState extends State<Home1Widget> {
                             EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                         child: FFButtonWidget(
                           onPressed: () async {
-                            /*Map<String, dynamic> A = {};//重要{}
-                            A['id']=widget.selectedItem['id'];
-                            A['contract']=widget.selectedItem['contract'];
-                            print(A);
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => OrderWidget( A: A, ),
-                              ),
-                            );*/
                             if(FFAppState().Name != "" && FFAppState().Telephone != "" && FFAppState().email != ""){
                               await deliveryAcceptOrder();
                               await checkorder();
-                              context.pushNamed('order');
+                              Map<String, dynamic> A = widget.selectedItem['time'];
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => OrderWidget( A: A, ),
+                                ),
+                              );
                             }
                             else{
                               await showDialog(
                                 context: context,
                                 builder: (alertDialogContext) {
                                   return AlertDialog(
-                                    title: Text('請設定姓名、電話、信箱'),
+                                    title: Text('Please set your name, phone number, and email address'),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -618,7 +662,7 @@ class _Home1WidgetState extends State<Home1Widget> {
                               );
                             }
                           },
-                          text: '接單',
+                          text: 'Orders',
                           options: FFButtonOptions(
                             width: MediaQuery.sizeOf(context).width * 1.0,
                             height: MediaQuery.sizeOf(context).height * 0.06,

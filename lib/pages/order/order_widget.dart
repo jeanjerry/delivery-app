@@ -89,6 +89,7 @@ class _OrderWidgetState extends State<OrderWidget> {
       A['orderStatus']=orderlist["orderStatus"];
       A['contract']=checkorderList[i]['contract'];
       A['storeAddress']=storeaddress["storeAddress"];
+      A['time']=widget.A["time"];
       await dbHelper.dbInsertStore(A); // 將訂單內容插入資料庫
     }
     //orderList = await dbHelper.dbGetStores();
@@ -191,7 +192,7 @@ class _OrderWidgetState extends State<OrderWidget> {
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 10.0),
                         child: Text(
-                          '已接訂單',
+                          'Order received',
                           style:
                               FlutterFlowTheme.of(context).labelMedium.override(
                                     fontFamily: 'Readex Pro',
@@ -302,32 +303,32 @@ class Items extends StatelessWidget {
         String str = "";
         getorderStatus()  {
           if(list![i]["orderStatus"]=='2'){
-            str = "店家準備中";
+            str = "The store is preparing";
           }
           else if (list![i]["orderStatus"]=='3'){
-            str = "外送員前往取餐";
+            str = "Delivery boy goes to pick up food";
 
           }
           else if (list![i]["orderStatus"]=='4'){
-            str = "外送員前往送餐";
+            str = "Delivery boy goes to deliver food";
           }
           else if (list![i]["orderStatus"]=='5'){
-            str = "等待消費者確認餐點";
+            str = "Waiting for the customer to confirm the meal";
           }
           else if (list![i]["orderStatus"]=='6'){
-            str = "已送達";
+            str = "arrived";
           }
           else if (list![i]["orderStatus"]=='7'){
-            str = "店家拒絕接單";
+            str = "The store refused to accept the order";
           }
           else if (list![i]["orderStatus"]=='10'){
-            str = "店家未完成訂單";
+            str = "The store did not complete the order";
           }
           else if (list![i]["orderStatus"]=='11'){
-            str = "外送員未完成訂單";
+            str = "The delivery boy did not complete the order";
           }
           else if (list![i]["orderStatus"]=='12'){
-            str = "取消訂單";
+            str = "cancel order";
           }
           return str;
         }
@@ -376,7 +377,7 @@ class Items extends StatelessWidget {
                     MainAxisAlignment.spaceBetween,
                     children: [
                       AutoSizeText(
-                        '單號 : '+list![i]["id"],
+                        'Order number: '+list![i]["id"],
                         style: FlutterFlowTheme.of(context)
                             .bodyMedium
                             .override(
@@ -389,7 +390,7 @@ class Items extends StatelessWidget {
                         padding: EdgeInsetsDirectional.fromSTEB(
                             135.0, 0.0, 0.0, 0.0),
                         child: AutoSizeText(
-                          '查看更多',
+                          'more',
                           style: FlutterFlowTheme.of(context)
                               .bodyMedium
                               .override(
@@ -415,7 +416,7 @@ class Items extends StatelessWidget {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       AutoSizeText(
-                        '外送費 : '+list![i]["fee"]+'  Eth',
+                        'Delivery fee: '+list![i]["fee"]+'  Eth',
                         style: FlutterFlowTheme.of(context)
                             .bodyMedium
                             .override(
@@ -439,7 +440,7 @@ class Items extends StatelessWidget {
                           color: Color(0xFFA1DAA1),
                         ),
                         child: AutoSizeText(
-                          '地址 : '+myList[1],
+                          'address : '+myList[1],
                           style: FlutterFlowTheme.of(context).bodyMedium.override(
                             fontFamily: 'Readex Pro',
                             fontSize: 24,

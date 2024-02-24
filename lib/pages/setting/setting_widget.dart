@@ -92,7 +92,7 @@ class _SettingWidgetState extends State<SettingWidget> {
               child: Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(22.0, 20.0, 0.0, 0.0),
                 child: Text(
-                  '姓名:',
+                  'Name:',
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily: 'Readex Pro',
                         fontSize: 22.0,
@@ -116,7 +116,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                   textCapitalization: TextCapitalization.words,
                   obscureText: false,
                   decoration: InputDecoration(
-                    labelText: '請輸入姓名',
+                    labelText: 'Please type in your name',
                     labelStyle:
                         FlutterFlowTheme.of(context).labelMedium.override(
                               fontFamily: 'Readex Pro',
@@ -181,7 +181,7 @@ class _SettingWidgetState extends State<SettingWidget> {
               child: Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(22.0, 0.0, 0.0, 0.0),
                 child: Text(
-                  '電話:',
+                  'Telephone:',
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily: 'Readex Pro',
                         fontSize: 22.0,
@@ -205,7 +205,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                   textCapitalization: TextCapitalization.words,
                   obscureText: false,
                   decoration: InputDecoration(
-                    labelText: '請輸入電話',
+                    labelText: 'Please enter phone number',
                     labelStyle:
                         FlutterFlowTheme.of(context).labelMedium.override(
                               fontFamily: 'Readex Pro',
@@ -270,7 +270,7 @@ class _SettingWidgetState extends State<SettingWidget> {
               child: Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(22.0, 0.0, 0.0, 0.0),
                 child: Text(
-                  '電子信箱:',
+                  'email:',
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily: 'Readex Pro',
                         fontSize: 22.0,
@@ -294,7 +294,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                   textCapitalization: TextCapitalization.words,
                   obscureText: false,
                   decoration: InputDecoration(
-                    labelText: '請輸入電子信箱',
+                    labelText: 'Please enter your email address',
                     labelStyle:
                         FlutterFlowTheme.of(context).labelMedium.override(
                               fontFamily: 'Readex Pro',
@@ -369,7 +369,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                         context: context,
                         builder: (alertDialogContext) {
                           return AlertDialog(
-                            title: Text('更新完成'),
+                            title: Text('update completed'),
                             actions: [
                               TextButton(
                                 onPressed: () =>
@@ -414,7 +414,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                       onPressed: () async {
                         Navigator.pop(context);
                       },
-                      text: '登出',
+                      text: 'Sign out',
                       options: FFButtonOptions(
                         width: MediaQuery.sizeOf(context).width * 0.4,
                         height: MediaQuery.sizeOf(context).height * 0.05,
